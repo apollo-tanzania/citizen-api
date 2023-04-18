@@ -1,0 +1,26 @@
+version: '3'
+services:
+  citizen:
+    build: .
+    image: citizen
+    environment:
+      - MONGODB_URL=mongo://mongodb:27017/citizen
+    ports: 
+      - "5000:3000"
+    depends_on:
+      - mongo
+    volumes:
+      - .:/src
+      - /usr/src/app/node_modules
+    networks:
+      - node-network
+  mongo:
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+    
+networks:
+  node-network:
+    driver: bridge
