@@ -9,7 +9,7 @@ const lawEnforcementSchema = new Schema({
             required: true
     },
     station: {
-        type: Schema.Types.ObjectId,
+        type: Schema.Types.String,
             ref: 'station',
             required: true
     },

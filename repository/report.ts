@@ -4,27 +4,52 @@ import ReportModel from '../model/report';
 import { PatchReportDto } from '../dto/report/patchReport';
 import { PutReportDto } from '../dto/report/putReport';
 import { CreateReportDto } from '../dto/report/createReport';
+import { ClientSession } from 'mongoose';
+import mongooseService from '../common/services/mongoose.service';
+import PhoneModel from '../model/phone';
+import StolenPhoneModel from '../model/stolenPhone';
 
 const log: debug.IDebugger = debug('app:reports-dao');
 
 class ReportRepository {
 
     Report = ReportModel;
+    Phone = PhoneModel;
+    StolenPhone = StolenPhoneModel;
 
     constructor() {
         log('Created new instance of Report Repository');
     }
 
     async addReport(reportFields: CreateReportDto) {
-        const report = new this.Report({
-            ...reportFields,
-        });
+        const { startSession } = mongooseService.getMongoose();
+        const session: ClientSession = await startSession();
+
+        session.startTransaction(); // Start transaction
+
+
         try {
+            const report = new this.Report({
+                ...reportFields,
+            });
             await report.save();
+
+            const stolenPhone = new this.StolenPhone({
+                ...reportFields?.phone
+            })
+
+            await stolenPhone.save();
+
+            await session.commitTransaction();
+
             return report?._id;
         } catch (error) {
-            // throw new Error("Could not add report");
-            return error
+            
+            await session.abortTransaction();
+            return error;
+
+        } finally {
+            session.endSession();
 
         }
         // await report.save();

@@ -4,16 +4,19 @@ import argon2 from 'argon2';
 import AdminModel from "../../model/admin";
 import shortid from "shortid";
 import mongooseService from "../../common/services/mongoose.service";
+import StolenPhoneModel from "../../model/stolenPhone";
 
 // initialize models variables
 const Station = StationModel;
 const User = UserModel;
 const Admin = AdminModel;
+const StolenPhone = StolenPhoneModel;
 
 const dataSeeder = () => {
 
     // User.db.dropCollection("users")
     // Station.db.dropCollection("stations")
+    // StolenPhoneModel.db.dropDatabase();
 
     // Role.estimatedDocumentCount((err, count) => {
     //     if(!err && count === 0){
@@ -118,39 +121,53 @@ const dataSeeder = () => {
     })
 
     User.estimatedDocumentCount(undefined, async (err: any, count: number) => {
-        if (!err && count === 0) {
-            const hashedPassword = await argon2.hash("admin");
+        const { startSession } = mongooseService.getMongoose()
+        const session = await startSession();
 
-            new User({
-                _id: shortid.generate(),
-                firstName: "Christopher",
-                middleName: "Fredrick",
-                lastName: "Masaka",
-                role: "admin",
-                email: "admin@citizen.com",
-                password: hashedPassword,
-                confirmed: true
-            })
-                .save((err: any, user: any) => {
-                    if (err) {
-                        return console.log('error', err);
-                    }
+        session.startTransaction();
+        try {
+            if (!err && count === 0) {
+                const hashedPassword = await argon2.hash("admin");
 
-                    new Admin({
-                        username: mongooseService.getMongoose().Types.ObjectId(user?._id),
-                        PermissionFlag: 8
-                    })
-                        .save((err: any, admin: any) => {
-                            if (err) {
-                                return console.log('error', err);
-                            }
-
-                            console.log("Admin added successfully");
-
-                        })
-
+                await new User({
+                    _id: shortid.generate(),
+                    firstName: "Christopher",
+                    middleName: "Fredrick",
+                    lastName: "Masaka",
+                    role: "admin",
+                    email: "admin@citizen.com",
+                    password: hashedPassword,
+                    confirmed: true
                 })
+                    .save(async (err: any, user: any) => {
+                        if (err) {
+                            return console.log('error', err);
+                        }
+
+                        new Admin({
+                            username: user?._id,
+                            PermissionFlag: 8
+                        })
+                            .save((err: any, admin: any) => {
+                                if (err) {
+                                    return console.log('error', err);
+                                }
+
+                                console.log("Admin added successfully");
+
+                            })
+
+                        await session.commitTransaction();
+
+                    })
+            }
+        } catch (error) {
+            await session.abortTransaction();
+
+        } finally {
+            session.endSession()
         }
+
     })
 
 }

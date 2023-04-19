@@ -3,10 +3,20 @@ const { Schema, model } = mongooseService.getMongoose();
 
 // Store information about the phones that have been reported as stolen or lost
 const StolenPhoneSchema = new Schema({
-    imei: {
+    imei1: {
         type: Number,
         maxlength: 15,
         required: true
+    },
+    imei2: {
+        type: Number,
+        maxlength: 15,
+        required: false
+    },
+    imei3: {
+        type: Number,
+        maxlength: 15,
+        required: false
     },
     name: {
         type: String,
@@ -36,6 +46,11 @@ const StolenPhoneSchema = new Schema({
         type: String,
         ref: 'user',
         required: false
+    },
+    status: {
+        type: String,
+        enum: ['verified', 'unverified'],
+        default: 'unverified'
     }
 
 })

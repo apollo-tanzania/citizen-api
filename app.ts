@@ -20,6 +20,7 @@ import { ReportsRoutes } from './routes/report';
 import dataSeeder from './config/database/seeder';
 import { StationsRoutes } from './routes/station';
 import { AdminsRoutes } from './routes/admin';
+import { PhonesRoutes } from './routes/phone';
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
@@ -65,6 +66,8 @@ routes.push(new AuthRoutes(app));
 routes.push(new ReportsRoutes(app));
 routes.push(new StationsRoutes(app));
 routes.push(new AdminsRoutes(app));
+routes.push(new PhonesRoutes(app));
+
 
 
 

@@ -3,28 +3,21 @@ const { Schema, model } = mongooseService.getMongoose();
 
 const LostPhoneReportSchema = new Schema({
     phone: {
-        imei: {
+        imei1: {
             type: Number,
             maxlength: 15,
             required: true
         },
-        name: {
-            type: String,
-            required: true
+        imei2: {
+            type: Number,
+            maxlength: 15,
+            required: false
         },
-        brand: {
-            type: String,
-            required: true
-        },
-        model: {
-            type: String,
-            required: true
-        },
-        manufacturer: {
-            type: String,
-            required: true
-        },
-        imageUrl: String
+        imei3: {
+            type: Number,
+            maxlength: 15,
+            required: false
+        }
     },
     incident: {
         date: {
@@ -71,14 +64,14 @@ const LostPhoneReportSchema = new Schema({
             required: true,
         },
         username: {
-            type: Schema.Types.ObjectId,
+            type: Schema.Types.String,
             ref: 'user',
             required: false
         },
     },
-    originalReportId:{
+    originalReportId: {
         type: Schema.Types.ObjectId,
-        ref:'report',
+        ref: 'report',
         required: false
     }
 
