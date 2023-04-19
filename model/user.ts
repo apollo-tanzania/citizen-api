@@ -4,8 +4,7 @@ const Schema = mongooseService.getMongoose().Schema;
 
 const userSchema = new Schema({
     _id: {
-        type: String,
-        unique: true
+        type: String
     },
     email: {
         type: String,
@@ -44,7 +43,7 @@ const userSchema = new Schema({
         default: "citizen"
     },
     // permissionFlags: Number,
-}, { id: false });
+}, { _id: false, id: false });
 
 const UserModel = mongooseService.getMongoose().model('user', userSchema);
 export default UserModel;

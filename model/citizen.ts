@@ -3,7 +3,7 @@ const { Schema, model } = mongooseService.getMongoose();
 
 const CitizenSchema = new Schema({
     username: {
-        type: Schema.Types.String,
+        type: String,
         ref: 'user',
         required: true
     },

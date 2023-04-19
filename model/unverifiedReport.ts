@@ -4,7 +4,7 @@ const { Schema, model } = mongooseService.getMongoose();
 // Stores information about the logs the report has been unverified and reasons for each.
 const UnverifiedReportSchema = new Schema({
     repordId: {
-        type: Schema.Types.String,
+        type: Schema.Types.ObjectId,
         ref: 'report',
         required: true
     },

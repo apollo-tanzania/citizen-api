@@ -4,11 +4,11 @@ const { Schema, model } = mongooseService.getMongoose();
 
 const CrimeReportSchema = new Schema({
     reporterId: {
-        type: Schema.Types.String,
+        type: String,
         ref: 'user',
     },
     stationId: {
-        type: Schema.Types.String,
+        type: String,
         ref: 'station',
         required: false
     },

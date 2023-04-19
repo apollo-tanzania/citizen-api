@@ -9,16 +9,16 @@ const FoundStolenPhonesSchema = new Schema({
         required: true
     },
     finderId: {
-        type: Schema.Types.String,
+        type: String,
         ref: 'user',
         required: true
     },
     dateFound: {
-        type: Schema.Types.String,
+        type: String,
         required: false
     },
     location: {
-        type: Schema.Types.String,
+        type: String,
     }
 }, { timestamps: true });
 const FoundStolenPhonesModel = model('foundStolenPhone', FoundStolenPhonesSchema);

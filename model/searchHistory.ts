@@ -12,7 +12,7 @@ const SearchHistorySchema = new Schema({
         required: false
     },
     searchedBy: {
-        type: Schema.Types.String,
+        type: String,
         ref: 'user',
         required: true
     }
