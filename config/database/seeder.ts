@@ -18,55 +18,6 @@ const dataSeeder = () => {
     // Station.db.dropCollection("stations")
     // StolenPhoneModel.db.dropDatabase();
 
-    // Role.estimatedDocumentCount((err, count) => {
-    //     if(!err && count === 0){
-    //         new Role({
-    //             _id: constants.ROLE_ADMIN,
-    //             name: constants.ROLE_ADMIN
-    //         })
-    //         .save(err =>{
-    //             if(err){
-    //                 console.log('error', err);
-    //             }
-    //             console.log("Role 'admin' added successfully");
-    //         })
-
-    //         new Role({
-    //             _id: constants.ROLE_LAW_ENFORCEMENT_ADMIN,
-    //             name: constants.ROLE_LAW_ENFORCEMENT_ADMIN
-    //         }).save(err=>{
-    //             if(err){
-    //                 console.log('error', err);
-    //             }
-    //             console.log("Role 'law enforcement admin' added successfully");
-
-    //         })
-
-    //         new Role({
-    //             _id: constants.ROLE_LAW_ENFORCEMENT,
-    //             name: constants.ROLE_LAW_ENFORCEMENT
-    //         }).save(err=>{
-    //             if(err){
-    //                 console.log('error', err);
-    //             }
-    //             console.log("Role 'law enforcement' added successfully");
-
-    //         })
-
-    //         new Role({
-    //             _id: constants.ROLE_CUSTOMER,
-    //             name: constants.ROLE_CUSTOMER
-    //         }).save(err=>{
-    //             if(err){
-    //                 console.log('error', err);
-    //             }
-    //             console.log("Role 'customer' added successfully");
-
-    //         })
-
-    //     }
-    // })
-
     Station.estimatedDocumentCount(undefined, (err: any, count: number) => {
         if (!err && count === 0) {
             new Station({
@@ -146,7 +97,7 @@ const dataSeeder = () => {
 
                         new Admin({
                             username: user?._id,
-                            PermissionFlag: 8
+                            permissionFlags: 8
                         })
                             .save((err: any, admin: any) => {
                                 if (err) {
@@ -157,10 +108,10 @@ const dataSeeder = () => {
 
                             })
 
-                        await session.commitTransaction();
-
                     })
             }
+            await session.commitTransaction();
+
         } catch (error) {
             await session.abortTransaction();
 
