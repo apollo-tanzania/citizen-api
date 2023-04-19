@@ -68,7 +68,7 @@ class AdminRepository {
     }
 
     async getAdminById(adminId: string) {
-        return this.Admin.findOne({ username: adminId }).populate(['User', 'Admin']).exec();
+        return this.Admin.findOne({ username: adminId }).populate('username').exec();
     }
 
     async getAdmins(limit = 10, page = 0) {
