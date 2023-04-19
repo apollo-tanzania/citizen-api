@@ -21,6 +21,7 @@ import dataSeeder from './config/database/seeder';
 import { StationsRoutes } from './routes/station';
 import { AdminsRoutes } from './routes/admin';
 import { PhonesRoutes } from './routes/phone';
+import { LawEnforcementRoutes } from './routes/lawEnforcement';
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
@@ -67,6 +68,7 @@ routes.push(new ReportsRoutes(app));
 routes.push(new StationsRoutes(app));
 routes.push(new AdminsRoutes(app));
 routes.push(new PhonesRoutes(app));
+routes.push(new LawEnforcementRoutes(app));
 
 
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import usersService from '../service/user';
 import adminsService from '../service/admin';
+import lawEnforcementService from '../service/lawEnforcement';
 import argon2 from 'argon2';
 import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
@@ -82,7 +83,7 @@ class UsersController {
             const userId = await adminsService.create(req.body);
             res.status(201).send({ id: userId });
         } catch (error) {
-             res.status(400).send({ error });
+            res.status(400).send({ error });
         }
     }
 
@@ -92,6 +93,48 @@ class UsersController {
     }
 
     // END ADMIN
+
+    // LAW ENFORCEMENT
+
+    async listLawEnforcementOfficers(req: express.Request, res: express.Response) {
+        const admins = await lawEnforcementService.list(100, 0);
+        res.status(200).send(admins);
+    }
+
+    async getLawEnforcementOfficerById(req: express.Request, res: express.Response) {
+        const admin = await lawEnforcementService.readById(req.body.id);
+        res.status(200).send(admin);
+    }
+
+    async createLawEnforcementOfficer(req: express.Request, res: express.Response) {
+        try {
+            req.body.password = await argon2.hash(req.body.password);
+            const userId = await lawEnforcementService.create(req.body);
+            res.status(201).send({ id: userId });
+        } catch (error) {
+            res.status(400).send({ error });
+        }
+    }
+
+    async removeLawEnforcementOfficer(req: express.Request, res: express.Response) {
+        log(await lawEnforcementService.deleteById(req.body.id));
+        res.status(204).send();
+    }
+
+    async patchLawEnforcementOfficer(req: express.Request, res: express.Response) {
+        if (req.body.password) {
+            req.body.password = await argon2.hash(req.body.password);
+        }
+        log(await lawEnforcementService.patchById(req.body.id, req.body));
+        res.status(204).send();
+    }
+
+    async putLawEnforcementOfficer(req: express.Request, res: express.Response) {
+        req.body.password = await argon2.hash(req.body.password);
+        log(await lawEnforcementService.putById(req.body.id, req.body));
+        res.status(204).send();
+    }
+    // END LAW ENFORCEMENT
 
     async updatePermissionFlags(req: express.Request, res: express.Response) {
         const patchUserDto: PatchUserDto = {
