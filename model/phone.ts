@@ -20,5 +20,5 @@ const PhoneSchema = new Schema({
         type: String
     }
 });
-const Phone = model('phone', PhoneSchema);
-export default Phone;
+const PhoneModel = model('phone', PhoneSchema);
+export default PhoneModel;

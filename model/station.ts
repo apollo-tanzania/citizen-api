@@ -1,6 +1,7 @@
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
+// Stores information about law enforcement stations
 const StationSchema = new Schema({
     _id: {
         type: String,
@@ -17,5 +18,5 @@ const StationSchema = new Schema({
     },
 }, { timestamps: true })
 
-const Station = model('station', StationSchema);
-export default Station;
+const StationModel = model('station', StationSchema);
+export default StationModel;

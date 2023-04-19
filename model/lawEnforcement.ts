@@ -1,6 +1,7 @@
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
+// Stores information about law enforcement officers
 const lawEnforcementSchema = new Schema({
     username: {
         type: Schema.Types.ObjectId,

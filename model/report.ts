@@ -1,7 +1,7 @@
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
-const ReportSchema = new Schema({
+const LostPhoneReportSchema = new Schema({
     phone: {
         imei: {
             type: Number,
@@ -76,9 +76,14 @@ const ReportSchema = new Schema({
             required: false
         },
     },
+    originalReportId:{
+        type: Schema.Types.ObjectId,
+        ref:'report',
+        required: false
+    }
 
 }, { timestamps: true });
 
-const Report = model('report', ReportSchema);
-export default Report;
+const LostPhoneReportModel = model('report', LostPhoneReportSchema);
+export default LostPhoneReportModel;
 

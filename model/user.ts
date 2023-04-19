@@ -3,7 +3,10 @@ import mongooseService from "../common/services/mongoose.service";
 const Schema = mongooseService.getMongoose().Schema;
 
 const userSchema = new Schema({
-    _id: String,
+    _id: {
+        type: String,
+        unique: true
+    },
     email: {
         type: String,
         required: true,

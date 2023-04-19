@@ -6,3 +6,32 @@ export enum PermissionFlag {
     ADMIN_PERMISSION_NOT_ALL_PERMISSIONS = 7,
     ALL_PERMISSIONS = 2147483647,
 }
+
+export enum Crimes {
+    DEFAULT = "n/a",
+    COMPUTERCRIME = "computer crime",
+    ROBBERY = "robbery",
+    ARSON = "arson",
+    KIDNAPPING = "kidnapping",
+    HOMICIDE = "homicide",
+    EMBEZZLEMENT = "embezzlement",
+    THEFT = "theft",
+    BRIBERY = "bribery",
+    BURGLARY = "burglary",
+    OTHER = "other"
+}
+
+export const CrimesList = [
+    "n/a",
+    "computer crime",
+    "robbery",
+    "arson",
+    "kidnapping",
+    "homicide",
+    "embezzlement",
+    "theft",
+    "bribery",
+    "burglary",
+    "other"
+]
+
