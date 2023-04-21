@@ -1,10 +1,24 @@
 import express from 'express';
 import lawEnforcementVerificationHistoryService from '../service/lawEnforcementVerificationHistory';
 import debug from 'debug';
+import apiResponse from '../common/api/apiResponse';
+import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
 class LawEnforcementVerificationHistoryController {
+
+    /**
+     * GET /api/v1/officer-verifications
+     * @summary This is the summary of the endpoint
+     * @tags law enforcement verification history
+     * @typeof {object} VerificationHistory
+     * @property {string} officerId - The officer
+     * @property {string} verifiedBy - The authorizer
+     * @return {array<>} 200 - success response - application/json
+     * @return {object} 400 - Bad request response
+     *  
+     */
 
     async listLawEnforcementVerificationHistory(req: express.Request, res: express.Response) {
         const histories = await lawEnforcementVerificationHistoryService.list(100, 0);
@@ -17,20 +31,39 @@ class LawEnforcementVerificationHistoryController {
     }
 
     /**
-   * POST /api/v1/reports
+   * POST /api/v1/officer-verifications
    * @summary This is the summary of the endpoint
-   * @tags reports
+   * @tags law enforcement verification history
+   * @param {string} officerId
    * @return {object} 200 - success response - application/json
    * @return {object} 400 - Bad request response
   */
     async createReportLawEnforcementVerificationHistory(req: express.Request, res: express.Response) {
         const response = await lawEnforcementVerificationHistoryService.create(req.body);
-  
-        if(response?.type === "Conflict"){
-            return res.status(409).send(response)
+
+        if (response?.errors) {
+            res.locals.data = {
+                message: "Create history Failed.",
+                data: response
+            }
+
+            return apiResponse(res, 400);
         }
 
-        return res.status(201).send(response);
+        if (response?.type === "Conflict") {
+            res.locals.data = {
+                message: "Law enforcement officer already verified.",
+            }
+
+            return apiResponse(res, 409);
+        }
+
+     
+        res.locals.data = {
+            message: "Verification history created",
+            data: response
+        }
+        apiResponse(res, 201)
     }
 
     async patch(req: express.Request, res: express.Response) {
