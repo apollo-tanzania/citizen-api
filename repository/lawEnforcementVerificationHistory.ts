@@ -1,15 +1,8 @@
-import shortid from 'shortid';
 import debug from 'debug';
-import { CreateUserDto } from '../dto/createUser';
-import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
-import { PutLawEnforcementDto } from '../dto/lawEnforcement/putLawEnforcement';
-import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
 import UserModel from '../model/user';
-import AdminModel from '../model/admin';
 import mongooseService from '../common/services/mongoose.service';
 import { ClientSession } from 'mongoose';
 import LawEnforcementModel from '../model/lawEnforcement';
-import { CreateLawEnforcementDto } from '../dto/lawEnforcement/createLawEnforcement';
 import LawEnforcementVerificationHistoryModel from '../model/lawEnforcementVerificationHistory';
 import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 import { PatchLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/patchLawEnforcementVerificationHistory';
@@ -35,6 +28,27 @@ class LawEnforcementVerificationHistoryRepository {
 
         try {
 
+            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.officerId });
+
+            // return officerToBeVerified;
+            if (officerToBeVerified?.isVerified) {
+                return {
+                    message: "Officer already verified",
+                    type: "Conflict"
+                }
+            }
+
+            // update status to verified
+            await this.LawEnforcement.findOneAndUpdate(
+                { username: officerToBeVerified?.username },
+                {
+                    $set: {
+                        isVerified: true
+                    }
+                },
+                { new: true }
+            ).exec();
+
             const lawEnforcementOfficerVerificationHistory = await new this.LawEnforcementVerificationHistory({
                 ...lawEnforcementOfficerVerificationHistoryFields
             })
@@ -48,7 +62,8 @@ class LawEnforcementVerificationHistoryRepository {
         } catch (error) {
             // Rollback the transaction i.e rollback any changes made to the database
             await session.abortTransaction();
-            throw error;
+            // throw error;
+            return error;
 
         } finally {
             // Ending sesion

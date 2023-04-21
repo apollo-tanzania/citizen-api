@@ -67,14 +67,28 @@ class UsersController {
 
     // ADMIN
 
-    async listAdmins(req: express.Request, res: express.Response) {
-        const admins = await adminsService.list(100, 0);
-        res.status(200).send(admins);
+    async listAdmins(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+        try {
+            const admins = await adminsService.list(100, 0);
+            res.status(200).send(admins);
+        } catch (error) {
+            next(error);
+        }
     }
 
-    async getAdminById(req: express.Request, res: express.Response) {
-        const admin = await adminsService.readById(req.body.id);
-        res.status(200).send(admin);
+    async getAdminById(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const admin = await adminsService.readById(req.body.id);
+            if (!admin) {
+                // throw new Error("Admin not found");
+                return res.status(500).send(admin)
+            }
+            res.status(200).send(admin);
+        } catch (error) {
+            next(error);
+        }
+
     }
 
     async createAdmin(req: express.Request, res: express.Response) {

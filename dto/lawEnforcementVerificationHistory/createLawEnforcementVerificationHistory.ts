@@ -1,4 +1,4 @@
 export interface CreateLawEnforcementVerificationHistoryDto {
-    officerrId: string;
-    verifiedBy: string;
+    officerId: string;
+    // verifiedBy: string;
 }

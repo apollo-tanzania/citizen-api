@@ -11,6 +11,7 @@ class MongooseService {
         useUnifiedTopology: true,
         serverSelectionTimeoutMS: 5000,
         useFindAndModify: false,
+        ignoreUndefined: true
     };
 
     constructor() {

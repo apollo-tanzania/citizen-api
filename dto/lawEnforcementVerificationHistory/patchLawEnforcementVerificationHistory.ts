@@ -1,3 +1,3 @@
-import { PutLawEnforcementDto } from './putLawEnforcement';
+import { PutLawEnforcementVerificationHistoryDto } from './putLawEnforcementVerificationHistory';
 
-export interface PatchLawEnforcementDto extends Partial<PutLawEnforcementDto> {}
+export interface PatchLawEnforcementVerificationHistoryDto extends Partial<PutLawEnforcementVerificationHistoryDto> {}

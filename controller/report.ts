@@ -1,8 +1,12 @@
-import express from 'express';
+import express, { response } from 'express';
 import reportService from '../service/report';
 import argon2 from 'argon2';
 import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
+import apiResponse from '../common/api/apiResponse';
+import { Errback, CookieOptions } from 'express-serve-static-core';
+import { OutgoingHttpHeaders, OutgoingHttpHeader } from 'http';
+import { Socket } from 'net';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
@@ -25,13 +29,23 @@ class ReportsController {
    * @return {object} 200 - success response - application/json
    * @return {object} 400 - Bad request response
   */
-    async createReport(req: express.Request, res: express.Response) {
-        const reportResponse = await reportService.create(req.body);
-        // if(!reportResponse.ok){
-        //     return res.status(201).send({ reportResponse });
-
-        // }
-        return res.status(201).send({ reportResponse });
+    async createReport(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const reportResponse = await reportService.create({ ...req.body });
+            // res.locals.report = reportResponse;
+            if (reportResponse?.errors) {
+                // return res.status(400).send(reportResponse);
+                res.locals.data = {
+                    message: "Could not add report to the database",
+                    errorDescription: reportResponse
+                }
+                return apiResponse(res, 400)
+            }
+            res.locals.data = reportResponse
+            apiResponse(res, 201);
+        } catch (error) {
+            next(error);
+        }
     }
 
     async patch(req: express.Request, res: express.Response) {

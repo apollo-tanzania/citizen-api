@@ -6,11 +6,7 @@ import { CreateReportDto } from '../dto/report/createReport';
 
 class ReportService implements CRUD {
     async create(resource: CreateReportDto) {
-        try {
-            return ReportRepository.addReport(resource);
-        } catch (error) {
-            return error
-        }
+        return ReportRepository.addReport(resource);
     }
 
     async deleteById(id: string) {

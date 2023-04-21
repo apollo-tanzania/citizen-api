@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { Jwt } from '../../common/types/jwt';
 import usersService from '../../service/user';
+import { log } from 'winston';
 
 // @ts-expect-error
 const jwtSecret: string = process.env.JWT_SECRET;
@@ -73,6 +74,36 @@ class JwtMiddleware {
             return res.status(401).send();
         }
     }
+
+    async extractCurrentUserId(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.verifiedBy = "";
+        if (req.headers['authorization']) {
+            const authorization = req.headers['authorization'].split(' ');
+            try {
+                if (authorization[0] !== 'Bearer') {
+                    return res.status(401).send();
+                } else {
+                    let jwtInfo = jwt.verify(
+                        authorization[1],
+                        jwtSecret
+                    ) as Jwt
+
+                    req.body.verifiedBy = jwtInfo.userId;
+                    next();
+                }
+            } catch (error) {
+                return res.status(401).send(error);
+            }
+
+        } else {
+            return res.status(401).send();
+        }
+    }
+
 }
 
 export default new JwtMiddleware();

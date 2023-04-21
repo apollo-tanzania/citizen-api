@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import debug from 'debug';
 import ReportModel from '../model/report';
 import { PatchReportDto } from '../dto/report/patchReport';
@@ -29,9 +28,46 @@ class ReportRepository {
 
 
         try {
-            const report = new this.Report({
+
+            let queryFilterArray = []
+            type QueryType = Record<any, Number>
+            let query: QueryType = {}
+
+            if (reportFields.phone.imei1) {
+                query.imei1 = reportFields.phone.imei1
+                queryFilterArray.push({ "phone.imei1": query.imei1 })
+            }
+            if (reportFields.phone.imei2) {
+                query.imei2 = reportFields.phone.imei2
+                queryFilterArray.push({ "phone.imei2": query.imei2 })
+            }
+
+            if (reportFields.phone.imei3) {
+                query.imei3 = reportFields.phone.imei3
+                queryFilterArray.push({ "phone.imei3": query.imei3 })
+            }
+
+            // returns null if not found
+            const reportFound = await this.Report.findOne({
+                $or: queryFilterArray,
+            },
+                null,
+                { sort: { _id: -1 } }
+            ).exec();
+
+            let report;
+
+            report = new this.Report({
                 ...reportFields,
             });
+
+            if (reportFound?._id) {
+                report = new this.Report({
+                    ...reportFields,
+                    originalReportId: mongooseService.getMongoose().Types.ObjectId(reportFound?._id),
+                });
+            }
+
             await report.save();
 
             const stolenPhone = new this.StolenPhone({
@@ -42,9 +78,10 @@ class ReportRepository {
 
             await session.commitTransaction();
 
-            return report?._id;
+            return report;
+
         } catch (error) {
-            
+
             await session.abortTransaction();
             return error;
 

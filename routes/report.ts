@@ -25,7 +25,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 ReportsController.listReports
             )
             .post(
-                body('email').isEmpty(),
+                body('phone.imei1').isNumeric(),
                 // body('password')
                 //     .isLength({ min: 5 })
                 //     .withMessage('Must include password (5+ characters)'),

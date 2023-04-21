@@ -117,6 +117,15 @@ class UsersMiddleware {
         next();
     }
 
+    async extractHistoryId(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.id = req.params.historyId;
+        next();
+    }
+
 
 }
 

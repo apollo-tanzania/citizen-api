@@ -38,7 +38,7 @@ export class AdminsRoutes extends CommonRoutesConfig {
         this.app
             .route(`/admins/:adminId`)
             .all(
-                UsersMiddleware.validateAdminExists,
+                // UsersMiddleware.validateAdminExists,
                 // jwtMiddleware.validJWTNeeded,
                 // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
             )
