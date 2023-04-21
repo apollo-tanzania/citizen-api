@@ -1,7 +1,8 @@
 export const options = {
     info: {
       version: '1.0.0',
-      title: 'Albums store',
+      title: 'Citizen API',
+      description: "Endpoints for the app",
       license: {
         name: 'MIT',
       },
