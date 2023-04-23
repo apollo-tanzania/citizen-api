@@ -3,7 +3,7 @@ import UsersController from '../controller/user';
 import UsersMiddleware from '../middleware/user';
 import jwtMiddleware from '../middleware/authentication/jwt';
 import permissionMiddleware from '../common/middleware/common.permission.middleware';
-import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
+import { PermissionFlag, Role } from '../common/middleware/common.permissionflag.enum';
 import BodyValidationMiddleware from '../common/middleware/body.validation.middleware';
 import { body } from 'express-validator';
 
@@ -18,10 +18,11 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
         this.app
             .route(`/law-enforcements`)
             .get(
-                // jwtMiddleware.validJWTNeeded,
-                // permissionMiddleware.permissionFlagRequired(
-                //     PermissionFlag.ADMIN_PERMISSION
-                // ),
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(
+                    [PermissionFlag.ADMIN_PERMISSION, PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION],
+                    [Role.LAW_ENFORCEMENT, Role.ADMIN]
+                ),
                 UsersController.listLawEnforcementOfficers
             )
             .post(
@@ -40,18 +41,19 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
                 UsersController.createLawEnforcementOfficer
             );
 
-        this.app.param(`lawEnforcementId`, UsersMiddleware.extractLawEnforcementId);
+        this.app.param(`userId`, UsersMiddleware.extractUserId);
         this.app
-            .route(`/law-enforcements/:lawEnforcementId`)
+            .route(`/law-enforcements/:userId`)
             .all(
             // UsersMiddleware.validateAdminExists,
-            // jwtMiddleware.validJWTNeeded,
-            // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+            jwtMiddleware.validJWTNeeded,
+            permissionMiddleware.onlySameUserOrAdminCanDoThisAction
         )
             .get(UsersController.getLawEnforcementOfficerById)
+            .get(UsersController.getLawEnforcementOfficerByEmail)
             .delete(UsersController.removeLawEnforcementOfficer);
 
-        this.app.put(`/law-enforcements/:lawEnforcementId`, [
+        this.app.put(`/law-enforcements/:userId`, [
             body('email').isEmail(),
             body('password')
                 .isLength({ min: 5 })
@@ -71,7 +73,7 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
             UsersController.putLawEnforcementOfficer,
         ]);
 
-        this.app.patch(`/law-enforcements/:lawEnforcementId`, [
+        this.app.patch(`/law-enforcements/:userId`, [
             body('email').isEmail().optional(),
             body('password')
                 .isLength({ min: 5 })
@@ -97,14 +99,24 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
          *
          * Please update it for admin usage in your own application!
          */
-        this.app.put(`/admins/:admiinId/permissionFlags/:permissionFlags`, [
+        this.app.put(`/law-enforcements/:userId/permissionFlags/:permissionFlags`, [
             jwtMiddleware.validJWTNeeded,
             permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.FREE_PERMISSION
+               [ PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION_NOT_ALL_PERMISSIONS]
             ),
-            UsersController.updatePermissionFlags,
+            UsersController.updateLawEnforcementPermissionFlags,
         ]);
+
+        // verify route
+        // this.app.put(`/law-enforcements/:userId/verification/:status`, [
+        //     jwtMiddleware.validJWTNeeded,
+        //     permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
+        //     permissionMiddleware.permissionFlagRequired(
+        //        [ PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION]
+        //     ),
+        //     UsersController.updateLawEnforcementPermissionFlags,
+        // ]);
 
         return this.app;
     }

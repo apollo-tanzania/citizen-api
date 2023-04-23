@@ -39,8 +39,8 @@ export class UsersRoutes extends CommonRoutesConfig {
             .route(`/users/:userId`)
             .all(
                 UsersMiddleware.validateUserExists,
-                // jwtMiddleware.validJWTNeeded,
-                // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.onlySameUserOrAdminCanDoThisAction
             )
             .get(UsersController.getUserById)
             .delete(UsersController.removeUser);
@@ -57,7 +57,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             UsersMiddleware.validateSameEmailBelongToSameUser,
             UsersMiddleware.userCantChangePermission,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.PAID_PERMISSION
+                [PermissionFlag.PAID_PERMISSION]
             ),
             UsersController.put,
         ]);
@@ -75,7 +75,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             UsersMiddleware.validatePatchEmail,
             UsersMiddleware.userCantChangePermission,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.PAID_PERMISSION
+                [PermissionFlag.PAID_PERMISSION]
             ),
             UsersController.patch,
         ]);
@@ -89,7 +89,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             jwtMiddleware.validJWTNeeded,
             permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.FREE_PERMISSION
+               [ PermissionFlag.FREE_PERMISSION]
             ),
             UsersController.updatePermissionFlags,
         ]);

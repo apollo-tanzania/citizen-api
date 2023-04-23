@@ -1,3 +1,4 @@
+import { PermissionFlag } from "../common/middleware/common.permissionflag.enum";
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
@@ -11,7 +12,8 @@ const lawEnforcementSchema = new Schema({
     },
     badgeNumber: {
         type: String,
-        required: false
+        required: true,
+        unique: true
     },
     station: {
         type: String,
@@ -22,7 +24,11 @@ const lawEnforcementSchema = new Schema({
         type: Boolean,
         default: false
     },
-    permissionFlags: Number,
+    permissionFlags: {
+        type: Number,
+        enum: [PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS, PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION],
+        default: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS
+    },
 }, { id: false });
 
 const LawEnforcementModel = model('lawEnforcement', lawEnforcementSchema);

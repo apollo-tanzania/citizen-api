@@ -1,4 +1,10 @@
-export enum PermissionFlag {
+export enum Role {
+    ADMIN = 'admin',
+    LAW_ENFORCEMENT = "law enforcement",
+    CITIZEN = "citizen"
+}
+
+export enum PermissionFlag { 
     FREE_PERMISSION = 1,
     PAID_PERMISSION = 2,
     ANOTHER_PAID_PERMISSION = 4,

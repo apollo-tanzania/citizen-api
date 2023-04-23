@@ -36,10 +36,19 @@ class AdminRepository {
 
             const savedUser = await user.save();
 
-            const admin = await new this.Admin({
+            let admin;
+
+            admin = await new this.Admin({
                 username: savedUser?._id,
                 permissionFlags: PermissionFlag.ADMIN_PERMISSION_NOT_ALL_PERMISSIONS,
             })
+
+            if (adminFields?.permissionFlags) {
+                admin = await new this.Admin({
+                    username: savedUser?._id,
+                    permissionFlags: adminFields.permissionFlags,
+                })
+            }
 
             await admin.save();
 
@@ -56,11 +65,19 @@ class AdminRepository {
             // Ending sesion
             session.endSession()
         }
-      
+
     }
 
     async getAdminByEmail(email: string) {
-        return this.Admin.findOne({ email: email }).exec();
+        try {
+            const user = await this.User.findOne({ email: email, role: 'admin' }).exec()
+
+            return await this.Admin.findOne({ username: user?._id }).exec();
+
+        } catch (error) {
+            return error;
+        }
+        // return this.Admin.findOne({ email: email }).exec();
     }
 
     async removeAdminById(userId: string) {
@@ -82,13 +99,17 @@ class AdminRepository {
         userId: string,
         userFields: PatchUserDto | PutUserDto
     ) {
-        const existingAdmin = await this.Admin.findOneAndUpdate(
-            { _id: userId },
-            { $set: userFields },
-            { new: true }
-        ).exec();
+        try {
+            const existingAdmin = await this.Admin.findOneAndUpdate(
+                { username: userId },
+                { $set: userFields },
+                { new: true, runValidators: true }
+            ).exec();
 
-        return existingAdmin;
+            return existingAdmin;
+        } catch (error) {
+            return error
+        }
     }
 }
 

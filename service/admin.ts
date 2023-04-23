@@ -19,11 +19,11 @@ class AdminsService implements CRUD {
     }
 
     async patchById(id: string, resource: PatchUserDto): Promise<any> {
-        return UsersDao.updateUserById(id, resource);
+        return AdminRepository.updateAdminById(id, resource);
     }
 
     async putById(id: string, resource: PutUserDto): Promise<any> {
-        return UsersDao.updateUserById(id, resource);
+        return AdminRepository.updateAdminById(id, resource);
     }
 
     async readById(id: string) {

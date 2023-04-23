@@ -5,6 +5,8 @@ import lawEnforcementService from '../service/lawEnforcement';
 import argon2 from 'argon2';
 import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
+import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
+import apiResponse from '../common/api/apiResponse';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
@@ -91,6 +93,11 @@ class UsersController {
 
     }
 
+    async getAdminByEmail(req: express.Request, res: express.Response) {
+        const admin = await adminsService.getAdminByEmail(req.body.id);
+        res.status(200).send(admin);
+    }
+
     async createAdmin(req: express.Request, res: express.Response) {
         try {
             req.body.password = await argon2.hash(req.body.password);
@@ -117,6 +124,11 @@ class UsersController {
 
     async getLawEnforcementOfficerById(req: express.Request, res: express.Response) {
         const admin = await lawEnforcementService.readById(req.body.id);
+        res.status(200).send(admin);
+    }
+
+    async getLawEnforcementOfficerByEmail(req: express.Request, res: express.Response) {
+        const admin = await lawEnforcementService.getLawEnforcementByEmail(req.body.id);
         res.status(200).send(admin);
     }
 
@@ -155,6 +167,37 @@ class UsersController {
             permissionFlags: parseInt(req.params.permissionFlags),
         };
         log(await usersService.patchById(req.body.id, patchUserDto));
+        res.status(204).send();
+    }
+
+    async updateAdminPermissionFlags(req: express.Request, res: express.Response) {
+        const patchAdminDto: PatchUserDto = {
+            permissionFlags: parseInt(req.params.permissionFlags),
+        };
+        const results = await adminsService.patchById(req.body.id, patchAdminDto);
+
+        if (results instanceof Error) {
+            res.locals.data = {
+                ...results
+            }
+            return apiResponse(res, 400)
+        }
+        res.status(204).send();
+        res.status(204).send();
+    }
+
+    async updateLawEnforcementPermissionFlags(req: express.Request, res: express.Response) {
+        const patchLawEnforcementDto: PatchUserDto = {
+            permissionFlags: parseInt(req.params.permissionFlags),
+        };
+        const results = await lawEnforcementService.patchById(req.body.id, patchLawEnforcementDto);
+
+        if (results instanceof Error) {
+            res.locals.data = {
+                ...results
+            }
+            return apiResponse(res, 400)
+        }
         res.status(204).send();
     }
 }

@@ -18,10 +18,11 @@ export class LawEnforcementVerificationHistoryRoutes extends CommonRoutesConfig 
         this.app
             .route(`/officer-verifications`)
             .get(
-                // jwtMiddleware.validJWTNeeded,
-                // permissionMiddleware.permissionFlagRequired(
-                //     PermissionFlag.ADMIN_PERMISSION
-                // ),
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(
+                    [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION]
+                ),
+                // permissionMiddleware.onlySomeUserOrAdminCanDoThisAction,
                 lawEnforcementVerificationHistoryController.listLawEnforcementVerificationHistory
             )
             .post(
@@ -47,8 +48,8 @@ export class LawEnforcementVerificationHistoryRoutes extends CommonRoutesConfig 
             .route(`/officer-verifications/:historyId`)
             .all(
             // UsersMiddleware.validateAdminExists,
-            // jwtMiddleware.validJWTNeeded,
-            // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+            jwtMiddleware.validJWTNeeded,
+            permissionMiddleware.onlySameUserOrAdminCanDoThisAction
         )
             .get(lawEnforcementVerificationHistoryController.getLawEnforcementVerificationHistoryById)
             .delete(lawEnforcementVerificationHistoryController.removeLawEnforcementVerificationHistory);

@@ -39,12 +39,31 @@ class LawEnforcementRepository {
 
             const savedUser = await user.save();
 
-            const lawEnforcementOfficer = await new this.LawEnforcement({
-                username: savedUser?._id,
-                station: lawEnforcementOfficerFields.station,
-                badgeNumber: lawEnforcementOfficerFields.badgeNumber,
-                permissionFlags: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS,
-            })
+            let lawEnforcementOfficer;
+
+            if (lawEnforcementOfficerFields.permissionFlags) {
+                lawEnforcementOfficer = await new this.LawEnforcement({
+                    username: savedUser?._id,
+                    station: lawEnforcementOfficerFields.station,
+                    badgeNumber: lawEnforcementOfficerFields.badgeNumber,
+                    permissionFlags: lawEnforcementOfficerFields.permissionFlags,
+                })
+            }else{
+                lawEnforcementOfficer = await new this.LawEnforcement({
+                    username: savedUser?._id,
+                    station: lawEnforcementOfficerFields.station,
+                    badgeNumber: lawEnforcementOfficerFields.badgeNumber,
+                    permissionFlags: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS,
+                })
+            }
+
+
+            // const lawEnforcementOfficer = await new this.LawEnforcement({
+            //     username: savedUser?._id,
+            //     station: lawEnforcementOfficerFields.station,
+            //     badgeNumber: lawEnforcementOfficerFields.badgeNumber,
+            //     permissionFlags: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS,
+            // })
 
             await lawEnforcementOfficer.save();
 
@@ -67,9 +86,9 @@ class LawEnforcementRepository {
     async getLawEnforcementByEmail(email: string) {
 
         try {
-            const user = await this.User.findOne({ email: email }).exec()
+            const user = await this.User.findOne({ email: email, role: 'law enforcement' }).exec()
 
-            return this.LawEnforcement.findOne({ username: user?.username }).exec();
+            return this.LawEnforcement.findOne({ username: user?._id }).exec();
 
         } catch (error) {
             throw error;
@@ -95,13 +114,18 @@ class LawEnforcementRepository {
         lawEnforcementId: string,
         lawEnforcementFields: PatchLawEnforcementDto | PutLawEnforcementDto
     ) {
-        const existingLawEnforcementId = await this.LawEnforcement.findOneAndUpdate(
-            { username: lawEnforcementId },
-            { $set: lawEnforcementFields },
-            { new: true }
-        ).exec();
 
-        return existingLawEnforcementId;
+        try {
+            const existingLawEnforcementId = await this.LawEnforcement.findOneAndUpdate(
+                { username: lawEnforcementId },
+                { $set: lawEnforcementFields },
+                { new: true, runValidators: true }
+            ).exec();
+    
+            return existingLawEnforcementId;
+        } catch (error) {
+            return error
+        }
     }
 }
 

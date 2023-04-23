@@ -3,7 +3,7 @@ import UsersController from '../controller/user';
 import UsersMiddleware from '../middleware/user';
 import jwtMiddleware from '../middleware/authentication/jwt';
 import permissionMiddleware from '../common/middleware/common.permission.middleware';
-import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
+import { PermissionFlag, Role } from '../common/middleware/common.permissionflag.enum';
 import BodyValidationMiddleware from '../common/middleware/body.validation.middleware';
 import { body } from 'express-validator';
 
@@ -34,18 +34,20 @@ export class AdminsRoutes extends CommonRoutesConfig {
                 UsersController.createAdmin
             );
 
-        this.app.param(`adminId`, UsersMiddleware.extracAdminId);
+        this.app.param(`userId`, UsersMiddleware.extractUserId);
         this.app
-            .route(`/admins/:adminId`)
+            .route(`/admins/:userId`)
             .all(
-                // UsersMiddleware.validateAdminExists,
-                // jwtMiddleware.validJWTNeeded,
-                // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+                UsersMiddleware.validateUserExists,
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.onlySameUserOrAdminCanDoThisAction
             )
             .get(UsersController.getAdminById)
-            .delete(UsersController.removeUser);
+            .get(UsersController.getAdminByEmail)
+            .all(UsersMiddleware.validateAdminExists)
+            .delete(UsersController.removeAdmin);
 
-        this.app.put(`/admins/:adminId`, [
+        this.app.put(`/admins/:userId`, [
             body('email').isEmail(),
             body('password')
                 .isLength({ min: 5 })
@@ -57,12 +59,12 @@ export class AdminsRoutes extends CommonRoutesConfig {
             UsersMiddleware.validateSameEmailBelongToSameUser,
             UsersMiddleware.userCantChangePermission,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.PAID_PERMISSION
+               [ PermissionFlag.PAID_PERMISSION]
             ),
             UsersController.put,
         ]);
 
-        this.app.patch(`/admins/:adminId`, [
+        this.app.patch(`/admins/:userId`, [
             body('email').isEmail().optional(),
             body('password')
                 .isLength({ min: 5 })
@@ -75,7 +77,7 @@ export class AdminsRoutes extends CommonRoutesConfig {
             UsersMiddleware.validatePatchEmail,
             UsersMiddleware.userCantChangePermission,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.PAID_PERMISSION
+                [PermissionFlag.PAID_PERMISSION]
             ),
             UsersController.patch,
         ]);
@@ -85,13 +87,14 @@ export class AdminsRoutes extends CommonRoutesConfig {
          *
          * Please update it for admin usage in your own application!
          */
-        this.app.put(`/admins/:admiinId/permissionFlags/:permissionFlags`, [
+        this.app.put(`/admins/:userId/permissionFlags/:permissionFlags`, [
             jwtMiddleware.validJWTNeeded,
             permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
             permissionMiddleware.permissionFlagRequired(
-                PermissionFlag.FREE_PERMISSION
+                [PermissionFlag.ADMIN_PERMISSION],
+                [Role.ADMIN]
             ),
-            UsersController.updatePermissionFlags,
+            UsersController.updateAdminPermissionFlags,
         ]);
 
         return this.app;

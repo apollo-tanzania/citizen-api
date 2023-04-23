@@ -1,5 +1,4 @@
 import LawEnforcementRepository from '../repository/lawEnforcement';
-import UsersDao from '../repository/user';
 import { CRUD } from '../common/interfaces/crud.interface';
 import { CreateLawEnforcementDto } from '../dto/lawEnforcement/createLawEnforcement';
 import { PutLawEnforcementDto } from '../dto/lawEnforcement/putLawEnforcement';
@@ -30,7 +29,7 @@ class LawEnforcementService implements CRUD {
         return LawEnforcementRepository.getLawEnforcementById(id);
     }
 
-    async getAdminByEmail(email: string) {
+    async getLawEnforcementByEmail(email: string) {
         return LawEnforcementRepository.getLawEnforcementByEmail(email);
     }
 }

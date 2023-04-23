@@ -35,11 +35,33 @@ class UsersMiddleware {
         next: express.NextFunction
     ) {
         if (
-            'permissionFlags' in req.body &&
-            req.body.permissionFlags !== res.locals.user.permissionFlags
+           ( 'permissionFlags' in req.body &&
+            req.body.permissionFlags !== res.locals.user.permissionFlags) ||
+           ( 'role' in req.body &&
+            req.body.permissionFlags !== res.locals.user.permissionFlags)
         ) {
             res.status(400).send({
-                errors: ['User cannot change permission flags'],
+                errors: ['User cannot change permission flags or roles'],
+            });
+        } else {
+            next();
+        }
+    }
+
+    
+    async userCantDeletePermission(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        if (
+           ( 'permissionFlags' in req.body &&
+            req.body.permissionFlags !== res.locals.user.permissionFlags) ||
+           ( 'role' in req.body &&
+            req.body.permissionFlags !== res.locals.user.permissionFlags)
+        ) {
+            res.status(400).send({
+                errors: ['User cannot change permission flags or roles'],
             });
         } else {
             next();
@@ -79,13 +101,13 @@ class UsersMiddleware {
         res: express.Response,
         next: express.NextFunction
     ) {
-        const user = await adminService.readById(req.params.adminId);
+        const user = await adminService.readById(req.params.userId);
         if (user) {
-            res.locals.admin = user;
+            res.locals.user = user;
             next();
         } else {
             res.status(404).send({
-                errors: [`Admin ${req.params.adminId} not found`],
+                errors: [`Admin ${req.params.userId} not found`],
             });
         }
     }
@@ -99,7 +121,7 @@ class UsersMiddleware {
         next();
     }
 
-    async extracAdminId(
+    async extractAdminId(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction

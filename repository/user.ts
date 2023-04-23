@@ -33,7 +33,7 @@ class StationRepository {
 
     async getUserByEmailWithPassword(email: string) {
         return this.User.findOne({ email: email })
-            .select('_id email permissionFlags +password')
+            .select('_id email permissionFlags role +password')
             .exec();
     }
 

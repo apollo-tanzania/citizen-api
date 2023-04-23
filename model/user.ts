@@ -1,3 +1,4 @@
+import { PermissionFlag, Role } from "../common/middleware/common.permissionflag.enum";
 import mongooseService from "../common/services/mongoose.service";
 
 const Schema = mongooseService.getMongoose().Schema;
@@ -39,8 +40,8 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "citizen", "law enforcement"],
-        default: "citizen"
+        enum: [Role.ADMIN, Role.CITIZEN, Role.LAW_ENFORCEMENT],
+        default: Role.CITIZEN
     },
     // permissionFlags: Number,
 }, { _id: false, id: false });
