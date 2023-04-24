@@ -1,4 +1,4 @@
-import {  CrimesList } from "../common/middleware/common.permissionflag.enum";
+import {  CrimesList } from "../common/enums";
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 

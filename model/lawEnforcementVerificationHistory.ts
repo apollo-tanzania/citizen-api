@@ -1,3 +1,4 @@
+import { HistoryType } from "../common/enums";
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
@@ -20,7 +21,16 @@ const LawEnforcementVerificationHistorySchema = new Schema({
         },
         required: true
     },
-    verifiedBy: {
+    type: {
+        type: String,
+        enum: [HistoryType.VERIFICATION, HistoryType.UNVERIFICATION],
+        default: HistoryType.VERIFICATION
+    },
+    reasonForUnverification:{
+        type: String,
+        required: false
+    },
+    authorizedBy: {
         type: String,
         ref: 'user',
         refConditions: {
