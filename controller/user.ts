@@ -2,11 +2,13 @@ import express from 'express';
 import usersService from '../service/user';
 import adminsService from '../service/admin';
 import lawEnforcementService from '../service/lawEnforcement';
+import lawEnforcementVerificationService from '../service/lawEnforcementVerificationHistory';
 import argon2 from 'argon2';
 import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
 import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
 import apiResponse from '../common/api/apiResponse';
+import { PatchLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/patchLawEnforcementVerificationHistory';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
@@ -199,6 +201,77 @@ class UsersController {
             return apiResponse(res, 400)
         }
         res.status(204).send();
+    }
+
+    // async updateLawEnforcementVerificationStatusFlag(req: express.Request, res: express.Response) {
+    //     const patchLawEnforcementDto: PatchLawEnforcementVerificationHistoryDto = {
+    //         status:  req.params.statusFlag as unknown as Boolean,
+    //     };
+    //     const results = await lawEnforcementService.patchById(req.body.id, patchLawEnforcementDto);
+
+    //     if (results instanceof Error) {
+    //         res.locals.data = {
+    //             ...results
+    //         }
+    //         return apiResponse(res, 400)
+    //     }
+    //     res.status(204).send();
+    // }
+
+    async updateLawEnforcementVerificationStatus(req: express.Request, res: express.Response) {
+        const response = await lawEnforcementService.updateLawEnforcementVerificationStatus(req.body);
+
+        if (response?.errors) {
+            res.locals.data = {
+                message: "Create history Failed.",
+                data: response
+            }
+
+            return apiResponse(res, 400);
+        }
+
+        if (response?.type === "Conflict") {
+            res.locals.data = {
+                message: "Law enforcement officer already verified.",
+            }
+
+            return apiResponse(res, 409);
+        }
+
+     
+        res.locals.data = {
+            message: "Verification history created",
+            data: response
+        }
+        apiResponse(res, 201)
+    }
+
+    async revokeLawEnforcementVerificationStatus(req: express.Request, res: express.Response) {
+        const response = await lawEnforcementService.revokeLawEnforcementVerificationStatus(req.body);
+
+        if (response?.errors) {
+            res.locals.data = {
+                message: "Create un-verificaton history Failed.",
+                data: response
+            }
+
+            return apiResponse(res, 400);
+        }
+
+        if (response?.type === "Conflict") {
+            res.locals.data = {
+                message: response.message,
+            }
+
+            return apiResponse(res, 409);
+        }
+
+     
+        res.locals.data = {
+            message: "Law enforcement verification revoked",
+            data: response
+        }
+        apiResponse(res, 201)
     }
 }
 
