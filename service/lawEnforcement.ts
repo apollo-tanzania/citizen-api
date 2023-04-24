@@ -3,6 +3,8 @@ import { CRUD } from '../common/interfaces/crud.interface';
 import { CreateLawEnforcementDto } from '../dto/lawEnforcement/createLawEnforcement';
 import { PutLawEnforcementDto } from '../dto/lawEnforcement/putLawEnforcement';
 import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
+import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
+import { CreateLawEnforcementUnverificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementUnverificationHistory';
 
 class LawEnforcementService implements CRUD {
     async create(resource: CreateLawEnforcementDto) {
@@ -31,6 +33,14 @@ class LawEnforcementService implements CRUD {
 
     async getLawEnforcementByEmail(email: string) {
         return LawEnforcementRepository.getLawEnforcementByEmail(email);
+    }
+
+    async updateLawEnforcementVerificationStatus(resource: CreateLawEnforcementVerificationHistoryDto) {
+        return LawEnforcementRepository.updateLawEnforcementVerificationStatus(resource);
+    }
+
+    async revokeLawEnforcementVerificationStatus(resource: CreateLawEnforcementUnverificationHistoryDto) {
+        return LawEnforcementRepository.revokeVerificationStatus(resource);
     }
 }
 
