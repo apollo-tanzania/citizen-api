@@ -80,7 +80,7 @@ class JwtMiddleware {
         res: express.Response,
         next: express.NextFunction
     ) {
-        req.body.verifiedBy = "";
+        req.body.authorizedBy = "";
         if (req.headers['authorization']) {
             const authorization = req.headers['authorization'].split(' ');
             try {
@@ -92,7 +92,7 @@ class JwtMiddleware {
                         jwtSecret
                     ) as Jwt
 
-                    req.body.verifiedBy = jwtInfo.userId;
+                    req.body.authorizedBy = jwtInfo.userId;
                     next();
                 }
             } catch (error) {
