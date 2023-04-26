@@ -19,9 +19,9 @@ export class LawEnforcementVerificationHistoryRoutes extends CommonRoutesConfig 
             .route(`/officer-verifications`)
             .get(
                 jwtMiddleware.validJWTNeeded,
-                permissionMiddleware.permissionFlagRequired(
-                    [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION]
-                ),
+                // permissionMiddleware.permissionFlagRequired(
+                //     [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION]
+                // ),
                 // permissionMiddleware.onlySomeUserOrAdminCanDoThisAction,
                 lawEnforcementVerificationHistoryController.listLawEnforcementVerificationHistory
             )

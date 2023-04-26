@@ -28,7 +28,7 @@ class LawEnforcementVerificationHistoryRepository {
 
         try {
 
-            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.officerId });
+            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.lawEnforcementId });
 
             // return officerToBeVerified;
             if (officerToBeVerified?.isVerified) {
@@ -89,7 +89,13 @@ class LawEnforcementVerificationHistoryRepository {
     }
 
     async getLawEnforcementVerificationHistoryById(historyId: string) {
-        return this.LawEnforcementVerificationHistory.findOne({ _id: historyId }).populate(['officerId', 'verifiedBy']).exec();
+        try {
+            return this.LawEnforcementVerificationHistory.findOne({ id: historyId }).populate(['officerId', 'verifiedBy']).exec();
+
+        } catch (error) {
+            return error;
+            
+        }
     }
 
     async getLawEnforcementsVerificationHistory(limit = 10, page = 0) {

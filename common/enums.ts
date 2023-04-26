@@ -30,3 +30,8 @@ export const HistoryType = {
     VERIFICATION: "VERIFICATION",
     UNVERIFICATION: "UNVERIFICATION"
 }
+
+export const permissionAction = {
+    GRANTED: "granted",
+    REVOKED: "revoked"
+}

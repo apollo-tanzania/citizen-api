@@ -33,6 +33,17 @@ class AdminsService implements CRUD {
     async getAdminByEmail(email: string) {
         return AdminRepository.getAdminByEmail(email);
     }
+
+    // async updatePermissionById(id: string, resource: PatchUserDto): Promise<any> {
+    //     return AdminRepository.updateAdminById(id, resource);
+
+    // }
+
+    async updatePermissionById(id: string, resource: any): Promise<any> {
+        // return AdminRepository.updateAdminById(id, resource);
+        return AdminRepository.updateAdminPermissionById(id, resource);
+
+    }
     // async getUserByEmailWithPassword(email: string) {
     //     return UsersDao.getUserByEmailWithPassword(email);
     // }

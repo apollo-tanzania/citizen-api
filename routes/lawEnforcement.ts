@@ -20,9 +20,12 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
             .route(`/law-enforcements`)
             .get(
                 jwtMiddleware.validJWTNeeded,
+                // permissionMiddleware.permissionFlagRequired(
+                //     [PermissionFlag.ADMIN_PERMISSION, PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION],
+                //     [Role.LAW_ENFORCEMENT, Role.ADMIN]
+                // ),
                 permissionMiddleware.permissionFlagRequired(
-                    [PermissionFlag.ADMIN_PERMISSION, PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION],
-                    [Role.LAW_ENFORCEMENT, Role.ADMIN]
+                    PermissionFlag.VIEW_LAW_ENFORCEMENTS
                 ),
                 UsersController.listLawEnforcementOfficers
             )
@@ -47,30 +50,20 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
             .route(`/law-enforcements/officer-verifications`)
             .get(
                 jwtMiddleware.validJWTNeeded,
+                // permissionMiddleware.permissionFlagRequired(
+                //     [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION]
+                // ),
                 permissionMiddleware.permissionFlagRequired(
-                    [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION]
+                    PermissionFlag.MANAGE_LAW_ENFORCEMENTS
                 ),
                 // permissionMiddleware.onlySomeUserOrAdminCanDoThisAction,
                 lawEnforcementVerificationHistoryController.listLawEnforcementVerificationHistory
             )
-            .post(
-                body('officerId').isString(),
-                BodyValidationMiddleware.verifyBodyFieldsErrors,
-                jwtMiddleware.extractCurrentUserId,
-                UsersController.updateLawEnforcementVerificationStatus
-            )
-
-        this.app
-            .route(`/law-enforcements/officer-verifications/revoke`)
-            .post(
-                body('officerId').isString(),
-                body('reason').isString(),
-                BodyValidationMiddleware.verifyBodyFieldsErrors,
-                jwtMiddleware.extractCurrentUserId,
-                UsersController.revokeLawEnforcementVerificationStatus
-            )
 
         this.app.param(`userId`, UsersMiddleware.extractUserId);
+
+
+        // this.app.param(`userId`, UsersMiddleware.extractUserId);
         this.app
             .route(`/law-enforcements/:userId`)
             .all(
@@ -123,6 +116,39 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
             UsersController.patchLawEnforcementOfficer,
         ]);
 
+        this.app.param(`lawEnforcementId`, UsersMiddleware.extractOffcerId);
+
+        this.app
+            .route(`/law-enforcements/:lawEnforcementId/approve`)
+            .post(
+
+                // body('officerId').isString(),
+                BodyValidationMiddleware.verifyBodyFieldsErrors,
+                jwtMiddleware.validJWTNeeded,
+                jwtMiddleware.extractCurrentUserId,
+                // permissionMiddleware.permissionFlagRequired(
+                //     [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION]
+                // ),
+                permissionMiddleware.permissionFlagRequired(
+                    PermissionFlag.APPROVE_LAW_ENFORCEMENT
+                ),
+                UsersController.updateLawEnforcementVerificationStatus
+            )
+
+        this.app
+            .route(`/law-enforcements/:lawEnforcementId/disapprove`)
+            .post(
+                // body('officerId').isString(),
+                body('reason').isString(),
+                BodyValidationMiddleware.verifyBodyFieldsErrors,
+                jwtMiddleware.validJWTNeeded,
+                jwtMiddleware.extractCurrentUserId,
+                permissionMiddleware.permissionFlagRequired(
+                    PermissionFlag.DISAPPROVE_LAW_ENFORCEMENT
+                ),
+                UsersController.revokeLawEnforcementVerificationStatus
+            )
+
         /**
          * This route does not currently require extra permissions.
          *
@@ -131,8 +157,11 @@ export class LawEnforcementRoutes extends CommonRoutesConfig {
         this.app.put(`/law-enforcements/:userId/permissionFlags/:permissionFlags`, [
             jwtMiddleware.validJWTNeeded,
             permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
+            // permissionMiddleware.permissionFlagRequired(
+            //     [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION_NOT_ALL_PERMISSIONS]
+            // ),
             permissionMiddleware.permissionFlagRequired(
-                [PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION, PermissionFlag.ADMIN_PERMISSION_NOT_ALL_PERMISSIONS]
+                PermissionFlag.ADMIN_PERMISSION
             ),
             UsersController.updateLawEnforcementPermissionFlags,
         ]);

@@ -1,7 +1,6 @@
-export interface CreateLawEnforcementUnverificationHistoryDto {
-    officerId: string;
-    // status: Boolean;
+import { CreateLawEnforcementVerificationHistoryDto } from "./createLawEnforcementVerificationHistory";
+
+export interface CreateLawEnforcementUnverificationHistoryDto extends CreateLawEnforcementVerificationHistoryDto {
     type: string;
-    reason?: string;
-    authorizedBy: string;
+    reason: string;
 }

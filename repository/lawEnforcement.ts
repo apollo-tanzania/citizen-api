@@ -57,7 +57,9 @@ class LawEnforcementRepository {
                     username: savedUser?._id,
                     station: lawEnforcementOfficerFields.station,
                     badgeNumber: lawEnforcementOfficerFields.badgeNumber,
-                    permissionFlags: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS,
+                    // permissionFlags: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS,
+                    permissionFlags: lawEnforcementOfficerFields.permissionFlags ?? PermissionFlag.LAW_ENFORCEMENT_PERMISSION,
+
                 })
             }
 
@@ -131,7 +133,7 @@ class LawEnforcementRepository {
 
         try {
 
-            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.officerId });
+            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.lawEnforcementId });
 
             // return officerToBeVerified;
             if (officerToBeVerified?.isVerified) {
@@ -182,7 +184,7 @@ class LawEnforcementRepository {
 
         try {
 
-            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.officerId });
+            const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.lawEnforcementId });
 
             // return officerToBeVerified;
             if (!officerToBeVerified?.isVerified) {

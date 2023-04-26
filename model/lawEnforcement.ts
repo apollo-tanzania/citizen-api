@@ -26,8 +26,7 @@ const lawEnforcementSchema = new Schema({
     },
     permissionFlags: {
         type: Number,
-        enum: [PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS, PermissionFlag.LAW_ENFORCEMENT_ADMIN_PERMISSION],
-        default: PermissionFlag.LAW_ENFORCEMENT_PERMISSIONS
+        default: PermissionFlag.LAW_ENFORCEMENT_PERMISSION
     },
 }, { id: false });
 

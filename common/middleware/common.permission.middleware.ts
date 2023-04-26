@@ -1,6 +1,8 @@
 import express from 'express';
 import { PermissionFlag, Role } from './common.permissionflag.enum';
 import debug from 'debug';
+import checkIfIs32bitInteger from '../helpers/checkIfIs32bitIntenger';
+import Long from 'long';
 
 const log: debug.IDebugger = debug('app:common-permission-middleware');
 
@@ -12,20 +14,81 @@ class CommonPermissionMiddleware {
      * @param requiredRoles 
      * @returns void
      */
-    permissionFlagRequired(requiredPermissionFlag: PermissionFlag[], requiredRoles?: string[]) {
+    // permissionFlagRequired(requiredPermissionFlag: PermissionFlag[], requiredRoles?: string[]) {
+    //     return (
+    //         req: express.Request,
+    //         res: express.Response,
+    //         next: express.NextFunction
+    //     ) => {
+    //         try {
+    //             const userPermissionFlags = parseInt(
+    //                 res.locals.jwt.permissionFlags
+    //             );
+
+    //             const userRole = res.locals.jwt.role;
+
+    //             if (requiredPermissionFlag.includes(userPermissionFlags) && (requiredRoles ? requiredRoles?.includes(userRole) : true)) {
+    //                 next();
+    //             } else {
+    //                 res.status(403).send();
+    //             }
+    //         } catch (e) {
+    //             log(e);
+    //         }
+    //     };
+    // }
+
+    // permissionFlagRequired(requiredPermissionFlag: PermissionFlag[], requiredRoles?: string[]) {
+    //     return (
+    //         req: express.Request,
+    //         res: express.Response,
+    //         next: express.NextFunction
+    //     ) => {
+    //         try {
+    //             const userPermissionFlags = parseInt(
+    //                 res.locals.jwt.permissionFlags
+    //             );
+
+    //             const userRole = res.locals.jwt.role;
+
+    //             if (requiredPermissionFlag.includes(userPermissionFlags) && (requiredRoles ? requiredRoles?.includes(userRole) : true)) {
+    //                 next();
+    //             } else {
+    //                 res.status(403).send();
+    //             }
+    //         } catch (e) {
+    //             log(e);
+    //         }
+    //     };
+    // }
+    permissionFlagRequired(requiredPermissionFlag: PermissionFlag) {
         return (
             req: express.Request,
             res: express.Response,
             next: express.NextFunction
         ) => {
+            let permissionFlagLong;
+            let userPermissionFlagsLong;
+
             try {
                 const userPermissionFlags = parseInt(
                     res.locals.jwt.permissionFlags
                 );
 
-                const userRole = res.locals.jwt.role;
+                let checkResult = checkIfIs32bitInteger(PermissionFlag.ADMIN_PERMISSION)
 
-                if (requiredPermissionFlag.includes(userPermissionFlags) && (requiredRoles ? requiredRoles?.includes(userRole) : true)) {
+                if (!checkResult) {
+                    permissionFlagLong = Long.fromBits(2, PermissionFlag.ADMIN_PERMISSION)
+                    userPermissionFlagsLong = Long.fromBits(2, userPermissionFlags)
+
+                    if ((userPermissionFlagsLong.add(permissionFlagLong).toNumber) === permissionFlagLong.toNumber) { // bitwise AND operator for Long type values from Long.js library
+                        return next();
+                    } else {
+                        return res.status(403).send();
+                    }
+                }
+
+                if ((userPermissionFlags & requiredPermissionFlag) === requiredPermissionFlag) {
                     next();
                 } else {
                     res.status(403).send();
@@ -43,6 +106,8 @@ class CommonPermissionMiddleware {
     ) {
         const userPermissionFlags = parseInt(res.locals.jwt.permissionFlags);
         const userRole = res.locals.jwt.role;
+        let permissionFlagLong;
+        let userPermissionFlagsLong;
 
         if (
             req.params &&
@@ -51,12 +116,27 @@ class CommonPermissionMiddleware {
         ) {
             return next();
         } else {
-            // if (userPermissionFlags & PermissionFlag.ADMIN_PERMISSION) {
+            let checkResult = checkIfIs32bitInteger(PermissionFlag.ADMIN_PERMISSION)
 
-            if ([Role.ADMIN].includes(userRole)) {
+            if (!checkResult) {
+                permissionFlagLong = Long.fromBits(2, PermissionFlag.ADMIN_PERMISSION)
+                userPermissionFlagsLong = Long.fromBits(2, userPermissionFlags)
+
+                if ((userPermissionFlagsLong.add(permissionFlagLong).toNumber)) { // bitwise AND operator for Long type values from Long.js library
+                    return next();
+                } else {
+                    return res.status(403).send();
+                }
+            }
+
+            // if check is true perform below code block
+            if ((userPermissionFlags & PermissionFlag.ADMIN_PERMISSION)) {
+
+                // if ([Role.ADMIN].includes(userRole)) {
                 return next();
             } else {
                 return res.status(403).send();
+                // return  res.send({me: userPermissionFlags, two: PermissionFlag.ADMIN_PERMISSION, three: res.locals.jwt.userId})
             }
         }
     }

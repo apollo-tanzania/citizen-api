@@ -9,6 +9,7 @@ import { PatchUserDto } from '../dto/patchUser';
 import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
 import apiResponse from '../common/api/apiResponse';
 import { PatchLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/patchLawEnforcementVerificationHistory';
+import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
@@ -176,16 +177,35 @@ class UsersController {
         const patchAdminDto: PatchUserDto = {
             permissionFlags: parseInt(req.params.permissionFlags),
         };
-        const results = await adminsService.patchById(req.body.id, patchAdminDto);
+        const patchPermissionLog: PatchPermissionLog = {
+            // permissionFlags: parseInt(req.params.permissionFlags),
+
+        };
+
+        const permissionChangeDto = {
+            userId: req.params.adminId,
+            permissionFlags: parseInt(req.params.permissionFlags),
+            authorizedBy: req.body.authorizedBy
+        }
+
+        const results = await adminsService.updatePermissionById(req.body.id, permissionChangeDto);
 
         if (results instanceof Error) {
+            
             res.locals.data = {
                 ...results
             }
+            
             return apiResponse(res, 400)
         }
-        res.status(204).send();
-        res.status(204).send();
+        // res.status(204).send();
+        res.locals.data = {
+            message: "Admin permissions updated successfully",
+            ...results
+        }
+        return apiResponse(res, 201)
+
+        // return res.status(204).send(results);
     }
 
     async updateLawEnforcementPermissionFlags(req: express.Request, res: express.Response) {
@@ -238,7 +258,7 @@ class UsersController {
             return apiResponse(res, 409);
         }
 
-     
+
         res.locals.data = {
             message: "Verification history created",
             data: response
@@ -266,7 +286,7 @@ class UsersController {
             return apiResponse(res, 409);
         }
 
-     
+
         res.locals.data = {
             message: "Law enforcement verification revoked",
             data: response

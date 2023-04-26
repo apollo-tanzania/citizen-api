@@ -40,8 +40,8 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: [Role.ADMIN, Role.CITIZEN, Role.LAW_ENFORCEMENT],
-        default: Role.CITIZEN
+        enum: [Role.ADMIN, Role.LAW_ENFORCEMENT_ADMIN, Role.CITIZEN, Role.LAW_ENFORCEMENT, Role.GUEST],
+        default: Role.GUEST
     },
     // permissionFlags: Number,
 }, { _id: false, id: false });

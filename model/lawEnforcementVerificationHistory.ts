@@ -4,7 +4,7 @@ const { Schema, model } = mongooseService.getMongoose();
 
 // Stores information about the history of the verifications of the stolen phone reports.
 const LawEnforcementVerificationHistorySchema = new Schema({
-    officerId: {
+    lawEnforcementId: {
         type: String,
         ref: 'lawEnforcement',
         refConditions: {
@@ -48,8 +48,8 @@ const LawEnforcementVerificationHistorySchema = new Schema({
     }
 }, { timestamps: true });
 
-LawEnforcementVerificationHistorySchema.index({ officerId: 1 })
-LawEnforcementVerificationHistorySchema.index({ verifiedBy: 1 })
+LawEnforcementVerificationHistorySchema.index({ lawEndorcementId: 1 })
+LawEnforcementVerificationHistorySchema.index({ authorizedBy: 1 })
 
 const LawEnforcementVerificationHistoryModel = model('lawEnforcementVerificationHistory', LawEnforcementVerificationHistorySchema);
 export default LawEnforcementVerificationHistoryModel;

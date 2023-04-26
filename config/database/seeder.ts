@@ -5,18 +5,28 @@ import AdminModel from "../../model/admin";
 import shortid from "shortid";
 import mongooseService from "../../common/services/mongoose.service";
 import StolenPhoneModel from "../../model/stolenPhone";
-
+import PermissionModel from "../../model/permission";
+import { PermissionFlag } from "../../common/middleware/common.permissionflag.enum";
+import Long from 'long'
+import checkIfIs32bitInteger from "../../common/helpers/checkIfIs32bitIntenger";
+import PermissionLogModel from "../../model/permissionLog";
 // initialize models variables
 const Station = StationModel;
 const User = UserModel;
 const Admin = AdminModel;
+const Permission = PermissionModel;
 const StolenPhone = StolenPhoneModel;
+const PermissionLog = PermissionLogModel;
 
-const dataSeeder = () => {
+const dataSeeder = async() => {
 
     // User.db.dropCollection("users")
     // Station.db.dropCollection("stations")
     // StolenPhoneModel.db.dropDatabase();
+    // Permission.db.dropCollection("permissions")
+      console.log(await PermissionLogModel.find())
+
+
 
     Station.estimatedDocumentCount(undefined, (err: any, count: number) => {
         if (!err && count === 0) {
@@ -71,6 +81,62 @@ const dataSeeder = () => {
         }
     })
 
+
+    Permission.estimatedDocumentCount(undefined, async (err: any, count: number) => {
+        const { startSession } = mongooseService.getMongoose()
+        const session = await startSession();
+
+        session.startTransaction();
+        try {
+            if (!err && count === 0) {
+
+                let permissionsList = []
+
+                for (const key in PermissionFlag) {
+                    if (Object.hasOwnProperty.call(PermissionFlag, key)) {
+                        if (!parseInt(key)) {
+                            permissionsList.push({
+                                name: key,
+                                flag: Long.fromNumber(PermissionFlag[key] as unknown as number) ,
+                            })
+                        }
+                    }
+                }
+
+                // let distinctPermissionList = permissionsList.filter((obj, index, self) => {
+                //     return index === self.findIndex((t) => {
+                //         t.name === obj.flag && t.name === obj.name
+                //     })
+                // })
+                // console.log(permissionsList.map(v => Long.fromBits(2, v.flag as unknown as number).add(Long.fromBits(2, v.flag as unknown as number)).toNumber()))
+
+
+                // console.log(distinctPermissionList)
+                permissionsList.map((permission) => {
+                    new Permission({
+                        name: permission.name,
+                        flag: permission.flag
+                    })
+                        .save((err: any) => {
+                            if (err) {
+                                return console.log('error', err);
+                            }
+                            console.log("Permission: " + permission.name + " created successfully with value: " + permission.flag);
+                        })
+                })
+
+                await session.commitTransaction();
+
+            }
+        } catch (error) {
+            console.log("Error: " + error)
+            await session.abortTransaction();
+
+        } finally {
+            session.endSession()
+        }
+    })
+
     User.estimatedDocumentCount(undefined, async (err: any, count: number) => {
         const { startSession } = mongooseService.getMongoose()
         const session = await startSession();
@@ -97,7 +163,7 @@ const dataSeeder = () => {
 
                         new Admin({
                             username: user?._id,
-                            permissionFlags: 8
+                            permissionFlags: 8589934592
                         })
                             .save((err: any, admin: any) => {
                                 if (err) {

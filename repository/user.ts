@@ -21,7 +21,8 @@ class StationRepository {
         const user = new this.User({
             _id: userId,
             ...userFields,
-            permissionFlags: PermissionFlag.FREE_PERMISSION,
+            // permissionFlags: PermissionFlag.FREE_PERMISSION,
+            permissionFlags: userFields.permissionFlags
         });
         await user.save();
         return userId;

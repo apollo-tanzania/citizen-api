@@ -56,9 +56,9 @@ export class UsersRoutes extends CommonRoutesConfig {
             BodyValidationMiddleware.verifyBodyFieldsErrors,
             UsersMiddleware.validateSameEmailBelongToSameUser,
             UsersMiddleware.userCantChangePermission,
-            permissionMiddleware.permissionFlagRequired(
-                [PermissionFlag.PAID_PERMISSION]
-            ),
+            // permissionMiddleware.permissionFlagRequired(
+            //     [PermissionFlag.PAID_PERMISSION]
+            // ),
             UsersController.put,
         ]);
 
@@ -74,9 +74,9 @@ export class UsersRoutes extends CommonRoutesConfig {
             BodyValidationMiddleware.verifyBodyFieldsErrors,
             UsersMiddleware.validatePatchEmail,
             UsersMiddleware.userCantChangePermission,
-            permissionMiddleware.permissionFlagRequired(
-                [PermissionFlag.PAID_PERMISSION]
-            ),
+            // permissionMiddleware.permissionFlagRequired(
+            //     [PermissionFlag.PAID_PERMISSION]
+            // ),
             UsersController.patch,
         ]);
 
@@ -88,9 +88,9 @@ export class UsersRoutes extends CommonRoutesConfig {
         this.app.put(`/users/:userId/permissionFlags/:permissionFlags`, [
             jwtMiddleware.validJWTNeeded,
             permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
-            permissionMiddleware.permissionFlagRequired(
-               [ PermissionFlag.FREE_PERMISSION]
-            ),
+            // permissionMiddleware.permissionFlagRequired(
+            //    [ PermissionFlag.FREE_PERMISSION]
+            // ),
             UsersController.updatePermissionFlags,
         ]);
 

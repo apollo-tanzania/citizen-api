@@ -139,6 +139,15 @@ class UsersMiddleware {
         next();
     }
 
+    async extractOffcerId(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.lawEnforcementId = req.params.lawEnforcementId;
+        next();
+    }
+
     async extractHistoryId(
         req: express.Request,
         res: express.Response,

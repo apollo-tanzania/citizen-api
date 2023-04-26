@@ -8,6 +8,7 @@ import BodyValidationMiddleware from '../common/middleware/body.validation.middl
 import { body } from 'express-validator';
 
 import express from 'express';
+import permissionLog from '../controller/permissionLog';
 
 export class AdminsRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -18,10 +19,10 @@ export class AdminsRoutes extends CommonRoutesConfig {
         this.app
             .route(`/admins`)
             .get(
-                // jwtMiddleware.validJWTNeeded,
-                // permissionMiddleware.permissionFlagRequired(
-                //     PermissionFlag.ADMIN_PERMISSION
-                // ),
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(
+                    PermissionFlag.ADMIN_PERMISSION
+                ),
                 UsersController.listAdmins
             )
             .post(
@@ -34,9 +35,27 @@ export class AdminsRoutes extends CommonRoutesConfig {
                 UsersController.createAdmin
             );
 
-        this.app.param(`userId`, UsersMiddleware.extractUserId);
         this.app
-            .route(`/admins/:userId`)
+            .route(`/admins/permissions`)
+            .get(
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(
+                    PermissionFlag.ADMIN_PERMISSION
+                ),
+                permissionLog.listPermissionLogs
+            )
+        // .post(
+        //     body('email').isEmail(),
+        //     body('password')
+        //         .isLength({ min: 5 })
+        //         .withMessage('Must include password (5+ characters)'),
+        //     BodyValidationMiddleware.verifyBodyFieldsErrors,
+        //     UsersMiddleware.validateSameEmailDoesntExist,
+        //     UsersController.createAdmin
+        // );
+        this.app.param(`adminId`, UsersMiddleware.extractAdminId);
+        this.app
+            .route(`/admins/:adminId`)
             .all(
                 UsersMiddleware.validateUserExists,
                 jwtMiddleware.validJWTNeeded,
@@ -47,7 +66,7 @@ export class AdminsRoutes extends CommonRoutesConfig {
             .all(UsersMiddleware.validateAdminExists)
             .delete(UsersController.removeAdmin);
 
-        this.app.put(`/admins/:userId`, [
+        this.app.put(`/admins/:adminId`, [
             body('email').isEmail(),
             body('password')
                 .isLength({ min: 5 })
@@ -59,12 +78,12 @@ export class AdminsRoutes extends CommonRoutesConfig {
             UsersMiddleware.validateSameEmailBelongToSameUser,
             UsersMiddleware.userCantChangePermission,
             permissionMiddleware.permissionFlagRequired(
-               [ PermissionFlag.PAID_PERMISSION]
+                PermissionFlag.ADMIN_PERMISSION
             ),
             UsersController.put,
         ]);
 
-        this.app.patch(`/admins/:userId`, [
+        this.app.patch(`/admins/:adminId`, [
             body('email').isEmail().optional(),
             body('password')
                 .isLength({ min: 5 })
@@ -77,7 +96,7 @@ export class AdminsRoutes extends CommonRoutesConfig {
             UsersMiddleware.validatePatchEmail,
             UsersMiddleware.userCantChangePermission,
             permissionMiddleware.permissionFlagRequired(
-                [PermissionFlag.PAID_PERMISSION]
+                PermissionFlag.ADMIN_PERMISSION
             ),
             UsersController.patch,
         ]);
@@ -87,12 +106,13 @@ export class AdminsRoutes extends CommonRoutesConfig {
          *
          * Please update it for admin usage in your own application!
          */
-        this.app.put(`/admins/:userId/permissionFlags/:permissionFlags`, [
+        this.app.put(`/admins/:adminId/permissionFlags/:permissionFlags`, [
+            BodyValidationMiddleware.verifyBodyFieldsErrors,
             jwtMiddleware.validJWTNeeded,
             permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
+            jwtMiddleware.extractCurrentUserId,
             permissionMiddleware.permissionFlagRequired(
-                [PermissionFlag.ADMIN_PERMISSION],
-                [Role.ADMIN]
+                PermissionFlag.ADMIN_PERMISSION
             ),
             UsersController.updateAdminPermissionFlags,
         ]);
