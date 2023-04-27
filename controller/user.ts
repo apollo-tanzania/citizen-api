@@ -75,10 +75,13 @@ class UsersController {
     // ADMIN
 
     async listAdmins(req: express.Request, res: express.Response, next: express.NextFunction) {
-        // const { filter, limit, select, skip } = extractParamsFromQuery(req.query)
         let { page, limit } = req.query;
-        let limitNumber = limit ? Number(limit) : 10;
-        let pageNumber = page ? Number(page) : 1;
+
+        if (Number(page) < 0 || Number(limit) < 0) return res.status(400).send({ message: "Ivalid page or limit value" })
+
+        const limitNumber = Number(limit) ? Number(limit) : 10; // set to default 10 if limit not specified
+        const pageNumber = Number(page) ? Number(page) : 1; // set to default 1 if page not specified
+
         try {
             const admins = await adminsService.list(limitNumber, pageNumber);
             res.status(200).send(admins);
