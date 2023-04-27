@@ -4,6 +4,8 @@ import { CRUD } from '../common/interfaces/crud.interface';
 import { CreateUserDto } from '../dto/createUser';
 import { PutUserDto } from '../dto/putUser';
 import { PatchUserDto } from '../dto/patchUser';
+import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
+import { PatchPermissionChangeDto } from '../dto/permissionLog/patchPermissionChange';
 
 class AdminsService implements CRUD {
     async create(resource: CreateUserDto) {
@@ -34,13 +36,7 @@ class AdminsService implements CRUD {
         return AdminRepository.getAdminByEmail(email);
     }
 
-    // async updatePermissionById(id: string, resource: PatchUserDto): Promise<any> {
-    //     return AdminRepository.updateAdminById(id, resource);
-
-    // }
-
-    async updatePermissionById(id: string, resource: any): Promise<any> {
-        // return AdminRepository.updateAdminById(id, resource);
+    async updatePermissionById(id: string, resource: PatchPermissionChangeDto): Promise<any> {
         return AdminRepository.updateAdminPermissionById(id, resource);
 
     }
