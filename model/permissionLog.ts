@@ -3,7 +3,7 @@ import { permissionAction } from "../common/enums";
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
-// Stores information about the history of the verifications of the stolen phone reports.
+// Stores information about the history of the permission changes of the users.
 const PermissionLogSchema = new Schema({
     userId: {
         type: String,
@@ -22,10 +22,6 @@ const PermissionLogSchema = new Schema({
         },
         required: true
     },
-    // reasonForUnverifcation: {
-    //     type: String,
-    //     required: false
-    // },
     previousPermissionFlag:{
         type: Number,
         required: true
