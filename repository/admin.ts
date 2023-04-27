@@ -111,8 +111,8 @@ class AdminRepository {
                 totalPages: Math.ceil(count / limit),
                 currentPage: page
             }
-        } catch (error) {
-            return error
+        } catch (error){
+            throw error;            
         }
 
     }
