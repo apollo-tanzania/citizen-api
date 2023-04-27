@@ -2,15 +2,11 @@ import express from 'express';
 import usersService from '../service/user';
 import adminsService from '../service/admin';
 import lawEnforcementService from '../service/lawEnforcement';
-import lawEnforcementVerificationService from '../service/lawEnforcementVerificationHistory';
 import argon2 from 'argon2';
 import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
-import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
 import apiResponse from '../common/api/apiResponse';
-import { PatchLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/patchLawEnforcementVerificationHistory';
 import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
-// import extractParamsFromQuery from '../common/helpers/utils';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
