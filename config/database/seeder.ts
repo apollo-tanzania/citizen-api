@@ -23,7 +23,7 @@ const dataSeeder = async() => {
     // User.db.dropCollection("users")
     // Station.db.dropCollection("stations")
     // StolenPhoneModel.db.dropDatabase();
-    // Permission.db.dropCollection("permissions")
+    Permission.db.dropCollection("permissions")
       console.log(await PermissionLogModel.find())
 
 
@@ -97,6 +97,7 @@ const dataSeeder = async() => {
                         if (!parseInt(key)) {
                             permissionsList.push({
                                 name: key,
+                                genericName: key?.replaceAll("_", " "),
                                 flag: Long.fromNumber(PermissionFlag[key] as unknown as number) ,
                             })
                         }
@@ -115,6 +116,7 @@ const dataSeeder = async() => {
                 permissionsList.map((permission) => {
                     new Permission({
                         name: permission.name,
+                        genericName: permission.genericName,
                         flag: permission.flag
                     })
                         .save((err: any) => {
