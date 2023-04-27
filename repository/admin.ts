@@ -13,6 +13,7 @@ import { ClientSession } from 'mongoose';
 import PermissionLogModel from '../model/permissionLog';
 import PermissionModel from '../model/permission';
 import Long from 'long'
+import e from 'express';
 
 const log: debug.IDebugger = debug('app:admins-dao');
 
@@ -137,12 +138,12 @@ class AdminRepository {
 
             let newPermissionFlagLong = Long.fromNumber(permissionLogFields?.permissionFlags as unknown as number)
             let previousPermissionFlagLong = Long.fromNumber(existingAdmin?.permissionFlags)
-            
+
             let permissionGrantedOrRevokedLong = newPermissionFlagLong.sub(previousPermissionFlagLong) // Convert to Long
             let permissionGrantedOrRevoked = permissionGrantedOrRevokedLong.toNumber(); // Convert to Number 
 
-            if(permissionGrantedOrRevoked === 0){                
-                throw new Error()
+            if (permissionGrantedOrRevoked === 0) {
+                throw new Error(undefined)
             }
 
             const permission = await this.Permission.findOne({
@@ -159,10 +160,14 @@ class AdminRepository {
             const log = await permissionLog.save();
 
             await session.commitTransaction()
+
             return {
-                admin: existingAdmin,
-                permissionLog: log
-            };
+                data: {
+                    newPermissionFlags: newPermissionFlagLong.toNumber(),
+                    permissionDetails: permission,
+                    permissionAction: log?.action
+                }
+            }
         } catch (error) {
             await session.abortTransaction()
             return error
