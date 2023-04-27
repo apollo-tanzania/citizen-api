@@ -1,10 +1,23 @@
 import express from 'express';
 
 function errorHandler(
-    err: any,
-    res: express.Response,
+    error: Error,
+    request: express.Request,
+    response: express.Response,
     next: express.NextFunction
 ) {
-    res.status(400).send(err)
+    console.log(error);
+    response.status(500).send({
+        message: "Something went wrong. Try again later",
+        error: {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        }
+        
+        // name: err.name,
+        // message: err.message,
+        // error: err?.stack
+    })
 }
 export default errorHandler;
