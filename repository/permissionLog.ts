@@ -43,11 +43,11 @@ class PermissionRepository {
     }
 
     async removePermissionLogById(permissionLogId: string) {
-        return this.PermissionLog.deleteOne({ id: permissionLogId }).exec();
+        return this.PermissionLog.deleteOne({ _id: permissionLogId }).exec();
     }
 
     async getPermissionLogById(permissionId: string) {
-        return this.PermissionLog.findOne({ id: permissionId }).exec();
+        return this.PermissionLog.findOne({ _id: permissionId }).exec();
     }
 
     async getPermissionLogs(limit = 10, page = 0) {
