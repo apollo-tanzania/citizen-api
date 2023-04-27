@@ -1,14 +1,14 @@
 import { CommonRoutesConfig } from '../common/common.routes.config';
 import UsersController from '../controller/user';
 import UsersMiddleware from '../middleware/user';
+import PermissionLogController from '../controller/permissionLog'
 import jwtMiddleware from '../middleware/authentication/jwt';
 import permissionMiddleware from '../common/middleware/common.permission.middleware';
 import { PermissionFlag, Role } from '../common/middleware/common.permissionflag.enum';
 import BodyValidationMiddleware from '../common/middleware/body.validation.middleware';
 import { body } from 'express-validator';
-
 import express from 'express';
-import permissionLog from '../controller/permissionLog';
+import MiscellaneousMiddleware from '../middleware/miscellaneous';
 
 export class AdminsRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -35,24 +35,29 @@ export class AdminsRoutes extends CommonRoutesConfig {
                 UsersController.createAdmin
             );
 
+        // ADMIN PERMISSION LOGS ROUTES
         this.app
-            .route(`/admins/permissions`)
+            .route(`/admins/permission-logs`)
             .get(
                 jwtMiddleware.validJWTNeeded,
                 permissionMiddleware.permissionFlagRequired(
                     PermissionFlag.ADMIN_PERMISSION
                 ),
-                permissionLog.listPermissionLogs
+                PermissionLogController.listPermissionLogs
             )
-        // .post(
-        //     body('email').isEmail(),
-        //     body('password')
-        //         .isLength({ min: 5 })
-        //         .withMessage('Must include password (5+ characters)'),
-        //     BodyValidationMiddleware.verifyBodyFieldsErrors,
-        //     UsersMiddleware.validateSameEmailDoesntExist,
-        //     UsersController.createAdmin
-        // );
+
+        this.app.param(`permissionLogId`, MiscellaneousMiddleware.extractPermissionLogId);
+        this.app
+            .route(`/admins/permission-logs/:permissionLogId`)
+            .all(
+                MiscellaneousMiddleware.validatePermissionLogExists,
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+            )
+            .get(PermissionLogController.getPermissionLogById)
+            .delete(PermissionLogController.removePermissionLog);
+
+        // END ADMIN PERMISION LOG ROUTES
         this.app.param(`adminId`, UsersMiddleware.extractAdminId);
         this.app
             .route(`/admins/:adminId`)
