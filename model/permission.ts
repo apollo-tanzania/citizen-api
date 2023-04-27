@@ -10,6 +10,12 @@ const permissionSchema = new Schema({
         unique: true,
         lowercase: true
     },
+    genericName: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
     flag: {
         type: Number,
         required: true
