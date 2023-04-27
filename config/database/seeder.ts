@@ -104,15 +104,6 @@ const dataSeeder = async() => {
                     }
                 }
 
-                // let distinctPermissionList = permissionsList.filter((obj, index, self) => {
-                //     return index === self.findIndex((t) => {
-                //         t.name === obj.flag && t.name === obj.name
-                //     })
-                // })
-                // console.log(permissionsList.map(v => Long.fromBits(2, v.flag as unknown as number).add(Long.fromBits(2, v.flag as unknown as number)).toNumber()))
-
-
-                // console.log(distinctPermissionList)
                 permissionsList.map((permission) => {
                     new Permission({
                         name: permission.name,
