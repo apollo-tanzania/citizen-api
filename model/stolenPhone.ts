@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
@@ -42,21 +43,7 @@ const StolenPhoneSchema = new Schema({
         type: String,
         required: true
     },
-    // reportedBy: {
-    //     type: String,
-    //     ref: 'user',
-    //     required: false
-    // },
-    countReportedStolen: {
-        type: Number,
-        defaultValue: 0
-    },
-    // status: {
-    //     type: String,
-    //     enum: ['verified', 'unverified'],
-    //     default: 'unverified'
-    // }
-
+    countReportedStolenOrLost: Number
 })
 const StolenPhoneModel = model('stolenPhone', StolenPhoneSchema);
 export default StolenPhoneModel;
