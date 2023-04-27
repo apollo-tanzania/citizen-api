@@ -96,11 +96,25 @@ class AdminRepository {
         return this.Admin.findOne({ username: adminId }).populate('username').exec();
     }
 
-    async getAdmins(limit = 10, page = 0) {
-        return this.Admin.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getAdmins(limit = 10, page = 1) {
+        try {
+            const admins = await this.Admin.find()
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+
+            const count = await this.Admin.countDocuments();
+
+            return {
+                admins,
+                totalCount: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page
+            }
+        } catch (error) {
+            return error
+        }
+
     }
 
     async updateAdminById(
