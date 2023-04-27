@@ -3,8 +3,6 @@ import debug from 'debug';
 import { CreateUserDto } from '../dto/createUser';
 import { PatchUserDto } from '../dto/patchUser';
 import { PutUserDto } from '../dto/putUser';
-import { PutPermissionLogDto } from '../dto/permissionLog/putPermissionLog';
-import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
 import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
 import UserModel from '../model/user';
 import AdminModel from '../model/admin';
@@ -13,7 +11,8 @@ import { ClientSession } from 'mongoose';
 import PermissionLogModel from '../model/permissionLog';
 import PermissionModel from '../model/permission';
 import Long from 'long'
-import e from 'express';
+import { PatchPermissionChangeDto } from '../dto/permissionLog/patchPermissionChange';
+import { PutPermissionChangeDto } from '../dto/permissionLog/putPermissionChange';
 
 const log: debug.IDebugger = debug('app:admins-dao');
 
@@ -123,7 +122,7 @@ class AdminRepository {
 
     async updateAdminPermissionById(
         userId: string,
-        permissionLogFields: PatchPermissionLog | PutPermissionLogDto
+        permissionLogFields: PatchPermissionChangeDto | PutPermissionChangeDto
     ) {
         const session: ClientSession = await mongooseService.getMongoose().startSession();
 
