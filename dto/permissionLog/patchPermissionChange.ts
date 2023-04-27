@@ -1,6 +1,3 @@
-export interface PutPermissionChangeDto {
-    userId: string;
-    authorizedBy: string;
-    permissionFlags: number;
-    action?: "granted" | "revoked";
-}
+import { PutPermissionChangeDto } from './putPermissionChange';
+
+export interface PatchPermissionChangeDto extends Partial<PutPermissionChangeDto> { }
