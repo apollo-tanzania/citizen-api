@@ -10,10 +10,12 @@ import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcemen
 import apiResponse from '../common/api/apiResponse';
 import { PatchLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/patchLawEnforcementVerificationHistory';
 import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
+// import extractParamsFromQuery from '../common/helpers/utils';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
 class UsersController {
+
     /**
      * GET /api/v1/users
      * @summary This is the summary of the endpoint
@@ -73,9 +75,12 @@ class UsersController {
     // ADMIN
 
     async listAdmins(req: express.Request, res: express.Response, next: express.NextFunction) {
-
+        // const { filter, limit, select, skip } = extractParamsFromQuery(req.query)
+        let { page, limit } = req.query;
+        let limitNumber = limit ? Number(limit) : 10;
+        let pageNumber = page ? Number(page) : 1;
         try {
-            const admins = await adminsService.list(100, 0);
+            const admins = await adminsService.list(limitNumber, pageNumber);
             res.status(200).send(admins);
         } catch (error) {
             next(error);
@@ -191,11 +196,11 @@ class UsersController {
         const results = await adminsService.updatePermissionById(req.body.id, permissionChangeDto);
 
         if (results instanceof Error) {
-            
+
             res.locals.data = {
                 ...results
             }
-            
+
             return apiResponse(res, 400)
         }
         // res.status(204).send();
