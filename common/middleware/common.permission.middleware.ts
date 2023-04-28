@@ -75,23 +75,30 @@ class CommonPermissionMiddleware {
                     res.locals.jwt.permissionFlags
                 );
 
-                let checkResult = checkIfIs32bitInteger(PermissionFlag.ADMIN_PERMISSION)
+                 console.log({userPermissionFlags, requiredPermissionFlag})
+
+                let checkResult = checkIfIs32bitInteger(requiredPermissionFlag)
+
 
                 if (!checkResult) {
-                    permissionFlagLong = Long.fromBits(2, PermissionFlag.ADMIN_PERMISSION)
-                    userPermissionFlagsLong = Long.fromBits(2, userPermissionFlags)
+                    permissionFlagLong = Long.fromNumber(requiredPermissionFlag)
+                    userPermissionFlagsLong = Long.fromNumber(userPermissionFlags)
 
-                    if ((userPermissionFlagsLong.add(permissionFlagLong).toNumber) === permissionFlagLong.toNumber) { // bitwise AND operator for Long type values from Long.js library
+                    if ((userPermissionFlagsLong.and(permissionFlagLong).toNumber()) === permissionFlagLong.toNumber()) { // bitwise AND operator for Long type values from Long.js library
                         return next();
                     } else {
-                        return res.status(403).send();
+                        return res.status(403).send({
+                            message: `User not allowed to perform this operation`
+                        });
                     }
                 }
 
                 if ((userPermissionFlags & requiredPermissionFlag) === requiredPermissionFlag) {
                     next();
                 } else {
-                    res.status(403).send();
+                    return res.status(403).send({
+                        message: `User not allowed to perform this operation`
+                    });
                 }
             } catch (e) {
                 log(e);
