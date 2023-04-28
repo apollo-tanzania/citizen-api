@@ -1,12 +1,8 @@
 import express, { response } from 'express';
 import reportService from '../service/report';
-import argon2 from 'argon2';
 import debug from 'debug';
-import { PatchUserDto } from '../dto/patchUser';
 import apiResponse from '../common/api/apiResponse';
-import { Errback, CookieOptions } from 'express-serve-static-core';
-import { OutgoingHttpHeaders, OutgoingHttpHeader } from 'http';
-import { Socket } from 'net';
+
 
 const log: debug.IDebugger = debug('app:users-controller');
 
@@ -17,18 +13,11 @@ class ReportsController {
         res.status(200).send(reports);
     }
 
-    // async getUserById(req: express.Request, res: express.Response) {
-    //     const user = await usersService.readById(req.body.id);
-    //     res.status(200).send(user);
-    // }
+    async getReportById(req: express.Request, res: express.Response) {
+        const user = await reportService.readById(req.body.id);
+        res.status(200).send(user);
+    }
 
-    /**
-   * POST /api/v1/reports
-   * @summary This is the summary of the endpoint
-   * @tags reports
-   * @return {object} 200 - success response - application/json
-   * @return {object} 400 - Bad request response
-  */
     async createReport(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             const reportResponse = await reportService.create({ ...req.body });
