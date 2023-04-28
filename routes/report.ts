@@ -1,6 +1,8 @@
 import { CommonRoutesConfig } from '../common/common.routes.config';
 import ReportsController from '../controller/report';
 import UsersMiddleware from '../middleware/user';
+import MiscellaneousMiddleware from '../middleware/miscellaneous';
+import ReportsMiddleware from '../middleware/report';
 import jwtMiddleware from '../middleware/authentication/jwt';
 import permissionMiddleware from '../common/middleware/common.permission.middleware';
 import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
@@ -18,81 +20,102 @@ export class ReportsRoutes extends CommonRoutesConfig {
         this.app
             .route(`/reports`)
             .get(
-                // jwtMiddleware.validJWTNeeded,
-                // permissionMiddleware.permissionFlagRequired(
-                //     PermissionFlag.ADMIN_PERMISSION
-                // ),
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.VIEW_REPORTS),
                 ReportsController.listReports
             )
             .post(
                 body('phone.imei1').isNumeric(),
-                // body('password')
-                //     .isLength({ min: 5 })
-                //     .withMessage('Must include password (5+ characters)'),
                 BodyValidationMiddleware.verifyBodyFieldsErrors,
-                // UsersMiddleware.validateSameEmailDoesntExist,
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.CREATE_REPORT),
                 ReportsController.createReport
             );
 
-        // this.app.param(`userId`, UsersMiddleware.extractUserId);
-        // this.app
-        //     .route(`/users/:userId`)
-        //     .all(
-        //         UsersMiddleware.validateUserExists,
-        //         jwtMiddleware.validJWTNeeded,
-        //         permissionMiddleware.onlySameUserOrAdminCanDoThisAction
-        //     )
-        //     .get(UsersController.getUserById)
-        //     .delete(UsersController.removeUser);
+        this.app.param(`reportId`, MiscellaneousMiddleware.extractReportId);
+        this.app
+            .route(`/reports/:reportId`)
+            .all(
+                UsersMiddleware.validateUserExists,
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+            )
+            .get(
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.VIEW_REPORTS),
+                ReportsController.getReportById
+            )
+            .delete(ReportsController.removeReport);
 
-        // this.app.put(`/users/:userId`, [
-        //     body('email').isEmail(),
-        //     body('password')
-        //         .isLength({ min: 5 })
-        //         .withMessage('Must include password (5+ characters)'),
-        //     body('firstName').isString(),
-        //     body('lastName').isString(),
-        //     body('permissionFlags').isInt(),
-        //     BodyValidationMiddleware.verifyBodyFieldsErrors,
-        //     UsersMiddleware.validateSameEmailBelongToSameUser,
-        //     UsersMiddleware.userCantChangePermission,
-        //     permissionMiddleware.permissionFlagRequired(
-        //         PermissionFlag.PAID_PERMISSION
-        //     ),
-        //     UsersController.put,
-        // ]);
+        this.app.put(`/reports/:reportId`, [
+            body('phone.imei1').isNumeric(),
+            body('phone.imei2').isNumeric(),
+            body('phone.imei3').isNumeric(),
+            body('victim.firstname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
+            body('victim.middlename').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
+            body('victim.lastname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
+            body('incident.date').isString(),
+            body('incident.place').isString(),
+            body('incident.depossession').isString(),
+            body('incident.brief').isString(),
+            body('rb').isString(),
+            body('verified').isBoolean(),
+            body('flag').isString(),
+            BodyValidationMiddleware.verifyBodyFieldsErrors,
+            jwtMiddleware.validJWTNeeded,
+            jwtMiddleware.extractCurrentUser,
+            MiscellaneousMiddleware.validateReportExists,
+            UsersMiddleware.userCantChangeReportStatus,
+            permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION), // it should be be edit report permissions
+            ReportsController.put,
+        ]);
 
-        // this.app.patch(`/users/:userId`, [
-        //     body('email').isEmail().optional(),
-        //     body('password')
-        //         .isLength({ min: 5 })
-        //         .withMessage('Password must be 5+ characters')
-        //         .optional(),
-        //     body('firstName').isString().optional(),
-        //     body('lastName').isString().optional(),
-        //     body('permissionFlags').isInt().optional(),
-        //     BodyValidationMiddleware.verifyBodyFieldsErrors,
-        //     UsersMiddleware.validatePatchEmail,
-        //     UsersMiddleware.userCantChangePermission,
-        //     permissionMiddleware.permissionFlagRequired(
-        //         PermissionFlag.PAID_PERMISSION
-        //     ),
-        //     UsersController.patch,
-        // ]);
+        this.app.patch(`/reports/:reportId`, [
+            body('phone.imei1').isNumeric().optional(),
+            body('phone.imei2').isNumeric().optional(),
+            body('phone.imei3').isNumeric().optional(),
+            body('victim.firstname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters").optional(),
+            body('victim.middlename').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters").optional(),
+            body('victim.lastname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters").optional(),
+            body('incident.date').isString().optional(),
+            body('incident.place').isString().optional(),
+            body('incident.depossession').isString().optional(),
+            body('incident.brief').isString().optional(),
+            body('rb').isString().optional(),
+            body('verified').isBoolean().optional(),
+            body('flag').isString().optional(),
+            BodyValidationMiddleware.verifyBodyFieldsErrors,
+            jwtMiddleware.validJWTNeeded,
+            jwtMiddleware.extractCurrentUser,
+            MiscellaneousMiddleware.validateReportExists,
+            UsersMiddleware.userCantChangeReportStatus,
+            permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION),
+            ReportsController.patch,
+        ]);
 
-        /**
-         * This route does not currently require extra permissions.
-         *
-         * Please update it for admin usage in your own application!
-        //  */
-        // this.app.put(`/users/:userId/permissionFlags/:permissionFlags`, [
-        //     jwtMiddleware.validJWTNeeded,
-        //     permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
-        //     permissionMiddleware.permissionFlagRequired(
-        //         PermissionFlag.FREE_PERMISSION
-        //     ),
-        //     UsersController.updatePermissionFlags,
-        // ]);
+        this.app
+            .route(`/reports/:reportId/approve`)
+            .post(
+                MiscellaneousMiddleware.removeRequestBody,
+                ReportsMiddleware.extractReportId,
+                jwtMiddleware.validJWTNeeded,
+                jwtMiddleware.extractCurrentUserId,
+                ReportsMiddleware.extractReportApprovalRequestBody(),
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.APPROVE_REPORTS),
+                ReportsController.patch
+            )
+
+        this.app
+            .route(`/reports/:reportId/disapprove`)
+            .post(
+                body('reason').isString(),
+                BodyValidationMiddleware.verifyBodyFieldsErrors,
+                jwtMiddleware.validJWTNeeded,
+                jwtMiddleware.extractCurrentUserId,
+                permissionMiddleware.permissionFlagRequired(
+                    PermissionFlag.DISAPPROVE_REPORTS
+                ),
+                ReportsController.patch
+            )
 
         return this.app;
     }
