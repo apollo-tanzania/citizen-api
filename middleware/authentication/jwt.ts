@@ -104,6 +104,35 @@ class JwtMiddleware {
         }
     }
 
+    async extractCurrentUser(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.currentUser = {};
+        if (req.headers['authorization']) {
+            const authorization = req.headers['authorization'].split(' ');
+            try {
+                if (authorization[0] !== 'Bearer') {
+                    return res.status(401).send();
+                } else {
+                    let jwtInfo = jwt.verify(
+                        authorization[1],
+                        jwtSecret
+                    ) as Jwt
+
+                    req.body.currentUserId = jwtInfo;
+                    next();
+                }
+            } catch (error) {
+                return res.status(401).send(error);
+            }
+
+        } else {
+            return res.status(401).send();
+        }
+    }
+
 }
 
 export default new JwtMiddleware();
