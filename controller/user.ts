@@ -12,37 +12,16 @@ const log: debug.IDebugger = debug('app:users-controller');
 
 class UsersController {
 
-    /**
-     * GET /api/v1/users
-     * @summary This is the summary of the endpoint
-     * @tags users
-     * @return {object} 200 - success response - application/json
-     * @return {object} 400 - Bad request response
-    */
     async listUsers(req: express.Request, res: express.Response) {
         const users = await usersService.list(100, 0);
         res.status(200).send(users);
     }
 
-    /**
-  * GET /api/v1/users
-  * @summary This is the summary of the endpoint
-  * @tags users
-  * @return {object} 200 - success response - application/json
-  * @return {object} 400 - Bad request response
- */
     async getUserById(req: express.Request, res: express.Response) {
         const user = await usersService.readById(req.body.id);
         res.status(200).send(user);
     }
 
-    /**
-   * GET /api/v1/users
-   * @summary This is the summary of the endpoint
-   * @tags users
-   * @return {object} 200 - success response - application/json
-   * @return {object} 400 - Bad request response
-  */
     async createUser(req: express.Request, res: express.Response) {
         req.body.password = await argon2.hash(req.body.password);
         const userId = await usersService.create(req.body);
@@ -178,13 +157,6 @@ class UsersController {
     }
 
     async updateAdminPermissionFlags(req: express.Request, res: express.Response) {
-        const patchAdminDto: PatchUserDto = {
-            permissionFlags: parseInt(req.params.permissionFlags),
-        };
-        const patchPermissionLog: PatchPermissionLog = {
-            // permissionFlags: parseInt(req.params.permissionFlags),
-
-        };
 
         const permissionChangeDto = {
             userId: req.params.adminId,
