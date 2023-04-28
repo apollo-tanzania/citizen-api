@@ -35,10 +35,10 @@ class UsersMiddleware {
         next: express.NextFunction
     ) {
         if (
-           ( 'permissionFlags' in req.body &&
-            req.body.permissionFlags !== res.locals.user.permissionFlags) ||
-           ( 'role' in req.body &&
-            req.body.permissionFlags !== res.locals.user.permissionFlags)
+            ('permissionFlags' in req.body &&
+                req.body.permissionFlags !== res.locals.user.permissionFlags) ||
+            ('role' in req.body &&
+                req.body.permissionFlags !== res.locals.user.permissionFlags)
         ) {
             res.status(400).send({
                 errors: ['User cannot change permission flags or roles'],
@@ -48,17 +48,17 @@ class UsersMiddleware {
         }
     }
 
-    
+
     async userCantDeletePermission(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction
     ) {
         if (
-           ( 'permissionFlags' in req.body &&
-            req.body.permissionFlags !== res.locals.user.permissionFlags) ||
-           ( 'role' in req.body &&
-            req.body.permissionFlags !== res.locals.user.permissionFlags)
+            ('permissionFlags' in req.body &&
+                req.body.permissionFlags !== res.locals.user.permissionFlags) ||
+            ('role' in req.body &&
+                req.body.permissionFlags !== res.locals.user.permissionFlags)
         ) {
             res.status(400).send({
                 errors: ['User cannot change permission flags or roles'],
@@ -96,6 +96,12 @@ class UsersMiddleware {
         }
     }
 
+    /**
+   * This middleware is responsible for checking if the user with admin role exists
+   * @param req 
+   * @param res 
+   * @param next 
+   */
     async validateAdminExists(
         req: express.Request,
         res: express.Response,
@@ -112,6 +118,12 @@ class UsersMiddleware {
         }
     }
 
+    /**
+   * This middleware is responsible for handling the extraction of param representing user
+   * @param req 
+   * @param res 
+   * @param next 
+   */
     async extractUserId(
         req: express.Request,
         res: express.Response,
@@ -121,6 +133,12 @@ class UsersMiddleware {
         next();
     }
 
+    /**
+       * This middleware is responsible for handling the extraction of param representing user with law admin role
+       * @param req 
+       * @param res 
+       * @param next 
+       */
     async extractAdminId(
         req: express.Request,
         res: express.Response,
@@ -130,6 +148,12 @@ class UsersMiddleware {
         next();
     }
 
+    /**
+   * This middleware is responsible for handling the extraction of param representing user with law enforcement role
+   * @param req 
+   * @param res 
+   * @param next 
+   */
     async extractLawEnforcementId(
         req: express.Request,
         res: express.Response,
@@ -139,6 +163,12 @@ class UsersMiddleware {
         next();
     }
 
+    /**
+     * This middleware is responsible for handling the extraction of param representing user with law enforcement role
+     * @param req 
+     * @param res 
+     * @param next 
+     */
     async extractOffcerId(
         req: express.Request,
         res: express.Response,
@@ -166,6 +196,28 @@ class UsersMiddleware {
         next();
     }
 
+    /**
+     * This middleware is responsible for handling reports tempering by unauthorized user
+     * @param req 
+     * @param res 
+     * @param next 
+     */
+    async userCantChangeReportStatus(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        if (
+            ('verified' in req.body &&
+                req.body.verified !== res.locals.report.verified)
+        ) {
+            res.status(400).send({
+                message: 'User cannot change report status',
+            });
+        } else {
+            next();
+        }
+    }
 
 }
 
