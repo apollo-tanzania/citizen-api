@@ -121,7 +121,7 @@ class JwtMiddleware {
                         jwtSecret
                     ) as Jwt
 
-                    req.body.currentUserId = jwtInfo;
+                    req.body.currentUser = jwtInfo;
                     next();
                 }
             } catch (error) {
