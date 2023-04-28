@@ -36,6 +36,15 @@ class MiscellaneousMiddleware {
         next();
     }
 
+    async extractReportId(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.id = req.params.reportId;
+        next();
+    }
+
 
 }
 
