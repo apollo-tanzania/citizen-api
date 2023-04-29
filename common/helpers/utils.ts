@@ -52,8 +52,8 @@ export function parseJSON(jsonString: string) {
 export default function extractParamsFromQuery(query: Record<string, any>) {
 
     let filterQuery = {};
-    let limitNumber = 0;
-    let pageNumber = 0;
+    let limitNumber = 10;
+    let pageNumber = 1;
     let sortQuery = {}
 
     try {
