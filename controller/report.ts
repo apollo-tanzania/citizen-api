@@ -30,15 +30,6 @@ class ReportsController {
     async createReport(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             const reportResponse = await reportService.create({ ...req.body });
-            // res.locals.report = reportResponse;
-            if (reportResponse?.errors) {
-                // return res.status(400).send(reportResponse);
-                res.locals.data = {
-                    message: "Could not add report to the database",
-                    errorDescription: reportResponse
-                }
-                return apiResponse(res, 400)
-            }
             res.locals.data = reportResponse
             apiResponse(res, 201);
         } catch (error) {
