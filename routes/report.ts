@@ -107,13 +107,13 @@ export class ReportsRoutes extends CommonRoutesConfig {
         this.app
             .route(`/reports/:reportId/disapprove`)
             .post(
-                body('reason').isString(),
-                BodyValidationMiddleware.verifyBodyFieldsErrors,
+                body('reason').isString().optional(),
+                MiscellaneousMiddleware.filterRequestBody(["reason"]),
+                ReportsMiddleware.extractReportId,
                 jwtMiddleware.validJWTNeeded,
                 jwtMiddleware.extractCurrentUserId,
-                permissionMiddleware.permissionFlagRequired(
-                    PermissionFlag.DISAPPROVE_REPORTS
-                ),
+                ReportsMiddleware.extractReportDispprovalRequestBody(),
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.DISAPPROVE_REPORTS),
                 ReportsController.patch
             )
 
