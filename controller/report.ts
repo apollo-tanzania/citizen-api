@@ -2,15 +2,24 @@ import express, { response } from 'express';
 import reportService from '../service/report';
 import debug from 'debug';
 import apiResponse from '../common/api/apiResponse';
+import extractParamsFromQuery from '../common/helpers/utils';
 
 
 const log: debug.IDebugger = debug('app:users-controller');
 
 class ReportsController {
 
-    async listReports(req: express.Request, res: express.Response) {
-        const reports = await reportService.list(100, 0);
-        res.status(200).send(reports);
+    async listReports(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const queryParams = extractParamsFromQuery(req.query)
+
+        if (!queryParams) return res.status(400).send({ message: "Invalid query body properties" })
+        try {
+            const reports = await reportService.list(queryParams);
+            res.status(200).send(reports); 
+        } catch (error) {
+            next(error)
+        }
+      
     }
 
     async getReportById(req: express.Request, res: express.Response) {
