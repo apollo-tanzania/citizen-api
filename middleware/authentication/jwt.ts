@@ -4,6 +4,9 @@ import crypto from 'crypto';
 import { Jwt } from '../../common/types/jwt';
 import usersService from '../../service/user';
 import { log } from 'winston';
+import { CreateUserDto } from '../../dto/createUser';
+import { Role } from '../../common/middleware/common.permissionflag.enum';
+import { extractUserPermission } from './utils';
 
 // @ts-expect-error
 const jwtSecret: string = process.env.JWT_SECRET;
@@ -31,6 +34,11 @@ class JwtMiddleware {
         const user: any = await usersService.getUserByEmailWithPassword(
             res.locals.jwt.email
         );
+
+        if (!user) res.status(500).send({ message: 'Invalid user' })
+
+        const userPermissionFlags = await extractUserPermission(user.email, user.role)
+
         const salt = crypto.createSecretKey(
             Buffer.from(res.locals.jwt.refreshKey.data)
         );
@@ -42,11 +50,11 @@ class JwtMiddleware {
             req.body = {
                 userId: user._id,
                 email: user.email,
-                permissionFlags: user.permissionFlags,
+                permissionFlags: userPermissionFlags,
             };
             return next();
         } else {
-            return res.status(400).send({ errors: ['Invalid refresh token'] });
+            return res.status(400).send({ message: 'Invalid refresh token' });
         }
     }
 
