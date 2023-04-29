@@ -7,14 +7,24 @@ import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
 import apiResponse from '../common/api/apiResponse';
 import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
+import extractParamsFromQuery from '../common/helpers/utils';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
 class UsersController {
 
-    async listUsers(req: express.Request, res: express.Response) {
-        const users = await usersService.list(100, 0);
-        res.status(200).send(users);
+    async listUsers(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const queryParams = extractParamsFromQuery(req.query)
+
+        if (!queryParams) return res.status(400).send({ message: "Invalid query body properties" })
+
+        try {
+            const users = await usersService.list(queryParams);
+            res.status(200).send(users);
+        } catch (error) {
+            next(error)
+        }
+
     }
 
     async getUserById(req: express.Request, res: express.Response) {
@@ -50,15 +60,13 @@ class UsersController {
     // ADMIN
 
     async listAdmins(req: express.Request, res: express.Response, next: express.NextFunction) {
-        let { page, limit } = req.query;
 
-        if (Number(page) < 0 || Number(limit) < 0) return res.status(400).send({ message: "Ivalid page or limit value" })
+        const queryParams = extractParamsFromQuery(req.query)
 
-        const limitNumber = Number(limit) ? Number(limit) : 10; // set to default 10 if limit not specified
-        const pageNumber = Number(page) ? Number(page) : 1; // set to default 1 if page not specified
+        if (!queryParams) return res.status(400).send({ message: "Invalid query body properties" })
 
         try {
-            const admins = await adminsService.list(limitNumber, pageNumber);
+            const admins = await adminsService.list(queryParams)
             res.status(200).send(admins);
         } catch (error) {
             next(error);
@@ -103,9 +111,17 @@ class UsersController {
 
     // LAW ENFORCEMENT
 
-    async listLawEnforcementOfficers(req: express.Request, res: express.Response) {
-        const admins = await lawEnforcementService.list(100, 0);
-        res.status(200).send(admins);
+    async listLawEnforcementOfficers(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const queryParams = extractParamsFromQuery(req.query)
+
+        if (!queryParams) return res.status(400).send({ message: "Invalid query body properties" })
+        try {
+            const admins = await lawEnforcementService.list(queryParams);
+            res.status(200).send(admins);
+        } catch (error) {
+            next(error)
+        }
+
     }
 
     async getLawEnforcementOfficerById(req: express.Request, res: express.Response) {
