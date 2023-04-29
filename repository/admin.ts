@@ -87,7 +87,7 @@ class AdminRepository {
             return await this.Admin.findOne({ username: user?._id }).exec();
 
         } catch (error) {
-            return error;
+            throw error;
         }
         // return this.Admin.findOne({ email: email }).exec();
     }
