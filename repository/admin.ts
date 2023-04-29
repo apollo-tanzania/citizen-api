@@ -7,14 +7,16 @@ import { PermissionFlag } from '../common/middleware/common.permissionflag.enum'
 import UserModel from '../model/user';
 import AdminModel from '../model/admin';
 import mongooseService from '../common/services/mongoose.service';
-import { ClientSession } from 'mongoose';
+import { ClientSession, Model, FilterQuery, UpdateQuery } from 'mongoose';
 import PermissionLogModel from '../model/permissionLog';
 import PermissionModel from '../model/permission';
 import Long from 'long'
 import { PatchPermissionChangeDto } from '../dto/permissionLog/patchPermissionChange';
 import { PutPermissionChangeDto } from '../dto/permissionLog/putPermissionChange';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 const log: debug.IDebugger = debug('app:admins-dao');
+
 
 class AdminRepository {
 
@@ -22,9 +24,11 @@ class AdminRepository {
     Admin = AdminModel;
     Permission = PermissionModel;
     PermissionLog = PermissionLogModel
+    // mex = queryWithPagination
+    // findBy = findB
 
     constructor() {
-        log('Created new instance of Admin repository');
+        // log('Created new instance of Admin repository');
     }
 
     async addAdmin(adminFields: CreateUserDto) {
@@ -96,25 +100,8 @@ class AdminRepository {
         return this.Admin.findOne({ username: adminId }).populate('username').exec();
     }
 
-    async getAdmins(limit = 10, page = 1) {
-        try {
-            const admins = await this.Admin.find()
-                .limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-
-            const count = await this.Admin.countDocuments();
-
-            return {
-                admins,
-                totalCount: count,
-                totalPages: Math.ceil(count / limit),
-                currentPage: page
-            }
-        } catch (error){
-            throw error;            
-        }
-
+    async getAdmins(queryParams: QueryParams) {
+        return queryWithPagination(this.Admin, queryParams)
     }
 
     async updateAdminById(

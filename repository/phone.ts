@@ -6,6 +6,7 @@ import { PutPhoneDto } from '../dto/phone/putPhone';
 import { CreatePhoneDto } from '../dto/phone/createPhone';
 import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 const log: debug.IDebugger = debug('app:phones-dao');
 
@@ -34,7 +35,7 @@ class PhoneRepository {
 
             return error;
 
-        } 
+        }
     }
 
     async removePhoneById(phoneId: string) {
@@ -45,11 +46,8 @@ class PhoneRepository {
         return this.StolenPhone.findOne({ _id: phoneId }).populate('Phone').exec();
     }
 
-    async getPhones(limit = 10, page = 0) {
-        return this.StolenPhone.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getPhones(queryParams: QueryParams) {
+        return queryWithPagination(this.StolenPhone, queryParams)
     }
 
     async updatePhoneById(

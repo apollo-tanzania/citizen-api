@@ -6,6 +6,7 @@ import { CreatePhoneDto } from '../dto/phone/createPhone';
 import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
 import PermissionModel from '../model/permission';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 const log: debug.IDebugger = debug('app:permissions-dao');
 
@@ -35,7 +36,7 @@ class PermissionRepository {
 
             return error;
 
-        } 
+        }
     }
 
     async removePermissionById(permissionId: string) {
@@ -46,11 +47,8 @@ class PermissionRepository {
         return this.Permission.findOne({ id: permissionId }).exec();
     }
 
-    async getPermissions(limit = 10, page = 0) {
-        return this.Permission.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getPermissions(queryParams: QueryParams) {
+        return queryWithPagination(this.Permission, queryParams)
     }
 
     async updatePermissionById(

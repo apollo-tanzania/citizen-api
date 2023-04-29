@@ -13,6 +13,7 @@ import { CreateLawEnforcementDto } from '../dto/lawEnforcement/createLawEnforcem
 import LawEnforcementVerificationHistoryModel from '../model/lawEnforcementVerificationHistory';
 import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 import { CreateLawEnforcementUnverificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementUnverificationHistory';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 
 const log: debug.IDebugger = debug('app:lawEnforcements-dao');
@@ -52,7 +53,7 @@ class LawEnforcementRepository {
                     badgeNumber: lawEnforcementOfficerFields.badgeNumber,
                     permissionFlags: lawEnforcementOfficerFields.permissionFlags,
                 })
-            }else{
+            } else {
                 lawEnforcementOfficer = await new this.LawEnforcement({
                     username: savedUser?._id,
                     station: lawEnforcementOfficerFields.station,
@@ -101,11 +102,8 @@ class LawEnforcementRepository {
         return this.LawEnforcement.findOne({ username: lawEnforcementId }).populate('username').exec();
     }
 
-    async getLawEnforcements(limit = 10, page = 0) {
-        return this.LawEnforcement.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getLawEnforcements(queryParams: QueryParams) {
+        return queryWithPagination(this.LawEnforcement, queryParams)
     }
 
     async updateLawEnforcementIdById(
@@ -119,7 +117,7 @@ class LawEnforcementRepository {
                 { $set: lawEnforcementFields },
                 { new: true, runValidators: true }
             ).exec();
-    
+
             return existingLawEnforcementId;
         } catch (error) {
             return error

@@ -7,6 +7,7 @@ import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
 import PermissionModel from '../model/permission';
 import PermissionLogModel from '../model/permissionLog';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 
 const log: debug.IDebugger = debug('app:permissions-dao');
@@ -50,12 +51,8 @@ class PermissionRepository {
         return this.PermissionLog.findOne({ _id: permissionId }).exec();
     }
 
-    async getPermissionLogs(limit = 10, page = 0) {
-        return this.PermissionLog.find()
-            .populate("permission")
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getPermissionLogs(queryParams: QueryParams) {
+        return queryWithPagination(this.PermissionLog, queryParams)
     }
 
     async updatePermissionById(

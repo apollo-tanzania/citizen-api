@@ -7,6 +7,7 @@ import { ClientSession, UpdateQuery } from 'mongoose';
 import mongooseService from '../common/services/mongoose.service';
 import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 const log: debug.IDebugger = debug('app:reports-dao');
 
@@ -194,11 +195,8 @@ class ReportRepository {
         return this.Report.findOne({ _id: reportId }).populate('Report').exec();
     }
 
-    async getReports(limit = 10, page = 0) {
-        return this.Report.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getReports(queryParams: QueryParams) {
+        return queryWithPagination(this.Report, queryParams)
     }
 
     async updateReportById(

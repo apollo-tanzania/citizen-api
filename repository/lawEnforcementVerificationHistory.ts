@@ -7,6 +7,7 @@ import LawEnforcementVerificationHistoryModel from '../model/lawEnforcementVerif
 import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 import { PatchLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/patchLawEnforcementVerificationHistory';
 import { PutLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/putLawEnforcementVerificationHistory';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 
 const log: debug.IDebugger = debug('app:lawEnforcements-dao');
@@ -94,15 +95,12 @@ class LawEnforcementVerificationHistoryRepository {
 
         } catch (error) {
             return error;
-            
+
         }
     }
 
-    async getLawEnforcementsVerificationHistory(limit = 10, page = 0) {
-        return this.LawEnforcementVerificationHistory.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getLawEnforcementsVerificationHistory(queryParams: QueryParams) {
+        return queryWithPagination(this.LawEnforcementVerificationHistory, queryParams)
     }
 
     async updateLawEnforcementVerificationHistoryIdById(

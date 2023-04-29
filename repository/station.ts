@@ -7,6 +7,7 @@ import { CreateReportDto } from '../dto/report/createReport';
 import { PatchStationDto } from '../dto/station/patchStation';
 import { PutStationDto } from '../dto/station/putStation';
 import { CreateStationDto } from '../dto/station/createStation';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 const log: debug.IDebugger = debug('app:reports-dao');
 
@@ -30,7 +31,7 @@ class StationRepository {
             return error
 
         }
-     
+
     }
 
     async removeStationById(stationId: string) {
@@ -41,11 +42,8 @@ class StationRepository {
         return this.Station.findOne({ _id: stationId }).populate('Station').exec();
     }
 
-    async getStations(limit = 10, page = 0) {
-        return this.Station.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getStations(queryParams: QueryParams) {
+        return queryWithPagination(this.Station, queryParams)
     }
 
     async updateStationById(

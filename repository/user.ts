@@ -5,6 +5,7 @@ import { PatchUserDto } from '../dto/patchUser';
 import { PutUserDto } from '../dto/putUser';
 import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
 import UserModel from '../model/user';
+import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 
 const log: debug.IDebugger = debug('app:users-dao');
 
@@ -46,11 +47,8 @@ class StationRepository {
         return this.User.findOne({ _id: userId }).populate('User').exec();
     }
 
-    async getUsers(limit = 25, page = 0) {
-        return this.User.find()
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
+    async getUsers(queryParams: QueryParams) {
+        return queryWithPagination(this.User, queryParams)
     }
 
     async updateUserById(
