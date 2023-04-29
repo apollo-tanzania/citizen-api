@@ -65,6 +65,43 @@ class ReportsMiddleware {
             next();
         }
     }
+
+    extractReportDispprovalRequestBody() {
+        return (
+            req: express.Request,
+            res: express.Response,
+            next: express.NextFunction
+        ) => {
+
+            if (isObjectEmpty(req.body)) return res.status(400).send()
+
+            // filter array
+            let selectedRequestBodyProperties = ["id", "authorizedBy", "reason"]
+
+            // Assign req.body object to temporary object
+            let requestBodyObject = req.body;
+
+            // Check if the request body as more or less than expected properties
+            if(!(Object.keys(requestBodyObject).length === selectedRequestBodyProperties.length)) return res.status(400).send({
+                message: "Invalid request body"
+            })
+
+            // Filter only selected request properties
+            Object.keys(requestBodyObject).forEach(property => {
+                if (!selectedRequestBodyProperties.includes(property)) {
+                    delete requestBodyObject[property];
+                }
+            })
+
+            // Update filtered request body properties
+            req.body = requestBodyObject;
+
+            // Add verified request body property which is set to true
+            req.body.verified = false;
+
+            next();
+        }
+    }
 }
 
 

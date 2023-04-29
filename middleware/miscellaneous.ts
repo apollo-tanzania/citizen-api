@@ -93,12 +93,12 @@ class MiscellaneousMiddleware {
         }
     }
 
-      /**
-     * This middleware checks if request body object is empty 
-     * @param req 
-     * @param res 
-     * @param next 
-     */
+    /**
+   * This middleware checks if request body object is empty 
+   * @param req 
+   * @param res 
+   * @param next 
+   */
     allowOnlyEmptyRequestBody(
         req: express.Request,
         res: express.Response,
@@ -125,6 +125,7 @@ class MiscellaneousMiddleware {
         req.body = {}
         next();
     }
+
 
 }
 
