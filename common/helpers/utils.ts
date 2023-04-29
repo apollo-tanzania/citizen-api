@@ -28,23 +28,55 @@ export function isObjectEmpty(object: object) {
     return true;
 
 }
-export default function extractParamsFromQuery(query : any) {
 
-    let filter = {};
-    let _limit = 0;
-    let skip = 0;
-    let _select = '';
+/**
+ * JSON Object parser
+ * @param jsonString 
+ * @returns 
+ */
+export function parseJSON(jsonString: string) {
+    try {
 
-    if (!isObjectEmpty(query)) {
-        let { limit, page } = query;
-        _limit = Number(limit) || _limit;
-        skip = Number(Number(page) - 1) * _limit;
-        _select = query.select || _select;
-        delete query.limit;
-        delete query.page;
-        delete query.select;
-        filter = query;
+        const data = JSON.parse(jsonString);
+        return data;
+    } catch (error) {
+        return null
+    }
+}
+
+/**
+ * Extracts the query parameters from request sanitizes the data and returns formatted object, otherwise returns null
+ * @param query 
+ * @returns 
+ */
+export default function extractParamsFromQuery(query: Record<string, any>) {
+
+    let filterQuery = {};
+    let limitNumber = 0;
+    let pageNumber = 0;
+    let sortQuery = {}
+
+    try {
+        if (!isObjectEmpty(query)) {
+            let { limit, page, filter, sort } = query;
+
+            if (Number(page) < 0 || Number(limit) < 0) return null;
+
+            limitNumber = limit ? parseInt(limit) : 10; // set the limit default to 10
+            pageNumber = page ? parseInt(page) : 1; // set to default 1 if page not specified
+            delete query.limit;
+            delete query.page;
+            filterQuery = filter ? JSON.parse(filter) : {};
+            sortQuery = sort ? JSON.parse(sort) : {};
+            delete query.filter;
+            delete query.sort;
+        }
+
+        return { filter: filterQuery, page: pageNumber, limit: limitNumber, sort: sortQuery }
+
+    } catch (error) {
+        return null
     }
 
-    return { filter, skip, limit: _limit, select: _select }
+
 }
