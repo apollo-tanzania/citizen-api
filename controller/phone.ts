@@ -1,14 +1,22 @@
 import express from 'express';
 import phoneService from '../service/phone';
 import debug from 'debug';
+import extractParamsFromQuery from '../common/helpers/utils';
 
 const log: debug.IDebugger = debug('app:phones-controller');
 
 class PhoneController {
    
-    async listPhones(req: express.Request, res: express.Response) {
-        const phones = await phoneService.list(100, 0);
-        res.status(200).send(phones);
+    async listPhones(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const queryParams = extractParamsFromQuery(req.query)
+        if (!queryParams) return res.status(400).send({ message: "Invalid query body properties" })
+        try {
+            const phones = await phoneService.list(queryParams);
+            res.status(200).send(phones);
+        } catch (error) {
+            next(error)
+        }
+    
     }
 
     async getPhoneById(req: express.Request, res: express.Response) {
