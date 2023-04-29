@@ -179,7 +179,7 @@ class ReportRepository {
         } catch (error) {
 
             await session.abortTransaction();
-            return error;
+            throw error;
 
         } finally {
             session.endSession();
