@@ -1,11 +1,10 @@
 import AdminRepository from '../repository/admin';
-import UsersDao from '../repository/user';
 import { CRUD } from '../common/interfaces/crud.interface';
 import { CreateUserDto } from '../dto/createUser';
 import { PutUserDto } from '../dto/putUser';
 import { PatchUserDto } from '../dto/patchUser';
-import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
 import { PatchPermissionChangeDto } from '../dto/permissionLog/patchPermissionChange';
+import { QueryParams } from '../repository/utils/createPaginatedQuery';
 
 class AdminsService implements CRUD {
     async create(resource: CreateUserDto) {
@@ -16,8 +15,8 @@ class AdminsService implements CRUD {
         return AdminRepository.removeAdminById(id);
     }
 
-    async list(limit: number, page: number) {
-        return AdminRepository.getAdmins(limit, page);
+    async list(queryParams: QueryParams) {
+        return AdminRepository.getAdmins(queryParams);
     }
 
     async patchById(id: string, resource: PatchUserDto): Promise<any> {

@@ -3,6 +3,7 @@ import { CRUD } from '../common/interfaces/crud.interface';
 import { PutReportDto } from '../dto/report/putReport';
 import { PatchReportDto } from '../dto/report/patchReport';
 import { CreateReportDto } from '../dto/report/createReport';
+import { QueryParams } from '../repository/utils/createPaginatedQuery';
 
 class ReportService implements CRUD {
     async create(resource: CreateReportDto) {
@@ -13,8 +14,8 @@ class ReportService implements CRUD {
         return ReportRepository.removeReportById(id);
     }
 
-    async list(limit: number, page: number) {
-        return ReportRepository.getReports(limit, page);
+    async list(queryParams: QueryParams) {
+        return ReportRepository.getReports(queryParams);
     }
 
     async patchById(id: string, resource: PatchReportDto): Promise<any> {

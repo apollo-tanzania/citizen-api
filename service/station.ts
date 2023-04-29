@@ -3,6 +3,7 @@ import { CRUD } from '../common/interfaces/crud.interface';
 import { CreateStationDto } from '../dto/station/createStation';
 import { PutStationDto } from '../dto/station/putStation';
 import { PatchStationDto } from '../dto/station/patchStation';
+import { QueryParams } from '../repository/utils/createPaginatedQuery';
 
 class StationService implements CRUD {
     async create(resource: CreateStationDto) {
@@ -17,8 +18,8 @@ class StationService implements CRUD {
         return StationRepository.removeStationById(id);
     }
 
-    async list(limit: number, page: number) {
-        return StationRepository.getStations(limit, page);
+    async list(queryParams: QueryParams) {
+        return StationRepository.getStations(queryParams);
     }
 
     async patchById(id: string, resource: PatchStationDto): Promise<any> {

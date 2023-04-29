@@ -5,6 +5,7 @@ import { PutLawEnforcementDto } from '../dto/lawEnforcement/putLawEnforcement';
 import { PatchLawEnforcementDto } from '../dto/lawEnforcement/patchLawEnforcement';
 import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 import { CreateLawEnforcementUnverificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementUnverificationHistory';
+import { QueryParams } from '../repository/utils/createPaginatedQuery';
 
 class LawEnforcementService implements CRUD {
     async create(resource: CreateLawEnforcementDto) {
@@ -15,8 +16,8 @@ class LawEnforcementService implements CRUD {
         return LawEnforcementRepository.removeLawEnforcementById(id);
     }
 
-    async list(limit: number, page: number) {
-        return LawEnforcementRepository.getLawEnforcements(limit, page);
+    async list(queryParams: QueryParams) {
+        return LawEnforcementRepository.getLawEnforcements(queryParams);
     }
 
     async patchById(id: string, resource: PatchLawEnforcementDto): Promise<any> {

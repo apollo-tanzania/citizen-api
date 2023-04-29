@@ -4,6 +4,7 @@ import { CRUD } from '../common/interfaces/crud.interface';
 import { PutReportDto } from '../dto/report/putReport';
 import { PatchReportDto } from '../dto/report/patchReport';
 import { CreatePhoneDto } from '../dto/phone/createPhone';
+import { QueryParams } from '../repository/utils/createPaginatedQuery';
 
 class PhoneService implements CRUD {
     async create(resource: CreatePhoneDto) {
@@ -18,8 +19,8 @@ class PhoneService implements CRUD {
         return PhoneRepository.removePhoneById(id);
     }
 
-    async list(limit: number, page: number) {
-        return PhoneRepository.getPhones(limit, page);
+    async list(queryParams: QueryParams) {
+        return PhoneRepository.getPhones(queryParams);
     }
 
     async patchById(id: string, resource: PatchReportDto): Promise<any> {

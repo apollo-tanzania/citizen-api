@@ -3,6 +3,7 @@ import { CRUD } from '../common/interfaces/crud.interface';
 import { CreateUserDto } from '../dto/createUser';
 import { PutUserDto } from '../dto/putUser';
 import { PatchUserDto } from '../dto/patchUser';
+import { QueryParams } from '../repository/utils/createPaginatedQuery';
 
 class UsersService implements CRUD {
     async create(resource: CreateUserDto) {
@@ -13,8 +14,8 @@ class UsersService implements CRUD {
         return UsersDao.removeUserById(id);
     }
 
-    async list(limit: number, page: number) {
-        return UsersDao.getUsers(limit, page);
+    async list(queryParams: QueryParams) {
+        return UsersDao.getUsers(queryParams);
     }
 
     async patchById(id: string, resource: PatchUserDto): Promise<any> {
