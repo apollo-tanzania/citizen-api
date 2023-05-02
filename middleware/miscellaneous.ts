@@ -66,6 +66,15 @@ class MiscellaneousMiddleware {
         next();
     }
 
+    async extractReportVerificationLogId(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.id = req.params.reportVerificationLogId;
+        next();
+    }
+
     filterRequestBody(selectedRequestBodyProperties: string[]) {
         return (
             req: express.Request,
