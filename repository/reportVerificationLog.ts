@@ -1,16 +1,13 @@
 import debug from 'debug';
 import ReportModel from '../model/report';
-import { PatchPhoneDto } from '../dto/phone/patchPhone';
-import { PutPhoneDto } from '../dto/phone/putPhone';
 import { CreatePhoneDto } from '../dto/phone/createPhone';
-import PhoneModel from '../model/phone';
 import ReportVerifcaitonLogModel from '../model/reportVerificationLog';
 import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
 import { PatchReportVerificationLogDto } from '../dto/reportVerificationLog/patchReportVerificationLog';
 import { PutReportVerificationLogDto } from '../dto/reportVerificationLog/putReportVerificationLog';
 
 
-const log: debug.IDebugger = debug('app:permissions-dao');
+const log: debug.IDebugger = debug('app:permission-logs-dao');
 
 class ReportVerificationLogRepository {
 
@@ -21,7 +18,7 @@ class ReportVerificationLogRepository {
         log('Created new instance of Report Verification Log Repository');
     }
 
-    async addReportVerificaionLog(reportVerificationLogFields: CreatePhoneDto) {
+    async addReportVerificationLog(reportVerificationLogFields: CreatePhoneDto) {
         const reportVerificationLog = new this.ReportVerificationLog({
             ...reportVerificationLogFields,
         });
@@ -31,19 +28,19 @@ class ReportVerificationLogRepository {
         return reportVerificationLog?._id;
     }
 
-    async removePermissionLogById(reportVerificationLogId: string) {
+    async removeReportVerificationLogById(reportVerificationLogId: string) {
         return this.ReportVerificationLog.deleteOne({ _id: reportVerificationLogId }).exec();
     }
 
-    async getPermissionLogById(reportVerificationLogId: string) {
+    async getReportVerificationLogById(reportVerificationLogId: string) {
         return this.ReportVerificationLog.findOne({ _id: reportVerificationLogId }).exec();
     }
 
-    async getPermissionLogs(queryParams: QueryParams) {
+    async getReportVerificationLogs(queryParams: QueryParams) {
         return queryWithPagination(this.ReportVerificationLog, queryParams)
     }
 
-    async updatePermissionById(
+    async updateReportVerificationLogById(
         reportVerificationLogId: string,
         reportVerificationLogFields: PatchReportVerificationLogDto | PutReportVerificationLogDto
     ) {
