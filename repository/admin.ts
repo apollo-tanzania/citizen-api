@@ -150,14 +150,14 @@ class AdminRepository {
                 flag: Math.abs(permissionGrantedOrRevoked)
             }).exec();
 
-            const permissionLog = await new this.PermissionLog({
+            const permissionLog = new this.PermissionLog({
                 ...permissionLogFields,
                 action: permissionGrantedOrRevoked > 0 ? "granted" : "revoked",
                 previousPermissionFlag: existingAdmin?.permissionFlags,
                 permission: permission._id
             })
 
-            const log = await permissionLog.save();
+            const log : any = await permissionLog.save();
 
             await session.commitTransaction()
 
