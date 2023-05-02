@@ -1,5 +1,6 @@
 import { CommonRoutesConfig } from '../common/common.routes.config';
 import ReportsController from '../controller/report';
+import ReportVerificationLogController from '../controller/reportVerificationLog';
 import UsersMiddleware from '../middleware/user';
 import MiscellaneousMiddleware from '../middleware/miscellaneous';
 import ReportsMiddleware from '../middleware/report';
@@ -31,6 +32,14 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 permissionMiddleware.permissionFlagRequired(PermissionFlag.CREATE_REPORT),
                 ReportsController.createReport
             );
+
+        this.app
+            .route(`/reports/verification-logs`)
+            .get(
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION),
+                ReportVerificationLogController.listReportVerificationLogs
+            )
 
         this.app.param(`reportId`, MiscellaneousMiddleware.extractReportId);
         this.app
@@ -116,6 +125,40 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 permissionMiddleware.permissionFlagRequired(PermissionFlag.DISAPPROVE_REPORTS),
                 ReportsController.disapproveReport
             )
+
+        // Verification logs routes
+        this.app.param(`reportVerificationLogId`, MiscellaneousMiddleware.extractReportVerificationLogId);
+        this.app
+            .route(`/reports/verification-logs/:reportVerificationLogId`)
+            .all(
+                MiscellaneousMiddleware.validateReportVerificationLogExists,
+                jwtMiddleware.validJWTNeeded,
+                permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
+            )
+            .get(ReportVerificationLogController.getReportVerificationLogById)
+            .delete(ReportVerificationLogController.removeReportVerificationLog);
+
+        this.app.put(`/reports/verification-logs/:reportVerificationLogId`, [
+            body('reason').isString(),
+            BodyValidationMiddleware.verifyBodyFieldsErrors,
+            jwtMiddleware.validJWTNeeded,
+            jwtMiddleware.extractCurrentUser,
+            MiscellaneousMiddleware.validatePermissionLogExists,
+            permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION), // it should be be edit report permissions
+            ReportVerificationLogController.put,
+        ]);
+
+        this.app.patch(`/reports/verification-logs/:reportVerificationLogId`, [
+            body('reason').isString().optional(),
+            BodyValidationMiddleware.verifyBodyFieldsErrors,
+            jwtMiddleware.validJWTNeeded,
+            jwtMiddleware.extractCurrentUser,
+            MiscellaneousMiddleware.validateReportExists,
+            permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION),
+            ReportVerificationLogController.patch,
+        ]);
+        // End report verification log routes
+
 
         return this.app;
     }
