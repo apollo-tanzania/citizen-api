@@ -101,7 +101,7 @@ class CommonPermissionMiddleware {
                     });
                 }
             } catch (e) {
-                // log(e);
+                return res.status(500).send();
             }
         };
     }
