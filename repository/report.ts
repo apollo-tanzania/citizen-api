@@ -151,9 +151,6 @@ class ReportRepository {
 
             await report.save();
 
-            console.log("1", reportQModelueryFilterArray)
-
-            console.log("2", phoneModelQueryFilterArray)
             const existingPhone = await this.StolenPhone.findOne({
                 $or: phoneModelQueryFilterArray,
             },
@@ -161,11 +158,8 @@ class ReportRepository {
                 { sort: { _id: -1 } }
             ).exec();
 
-            console.log(JSON.stringify(reportFields?.phone))
-            // return existingPhone;
             const update: UpdateQuery<{ countReportedStolenOrLost: number }> = { $inc: { countReportedStolenOrLost: 1 } }
 
-            console.log(existingPhone)
             if (existingPhone) {
                 await this.StolenPhone.findOneAndUpdate({
                     $or: phoneModelQueryFilterArray
