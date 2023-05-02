@@ -15,11 +15,11 @@ class ReportsController {
         if (!queryParams) return res.status(400).send({ message: "Invalid query body properties" })
         try {
             const reports = await reportService.list(queryParams);
-            res.status(200).send(reports); 
+            res.status(200).send(reports);
         } catch (error) {
             next(error)
         }
-      
+
     }
 
     async getReportById(req: express.Request, res: express.Response) {
@@ -52,6 +52,25 @@ class ReportsController {
         res.status(204).send();
     }
 
+    async approveReport(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            log(await reportService.approveById(req.body.id, req.body));
+            res.status(204).send();
+        } catch (error) {
+            next(error);
+        }
+
+    }
+
+    async disapproveReport(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            log(await reportService.disapproveById(req.body.id, req.body));
+            res.status(204).send();
+        } catch (error) {
+            next(error);
+        }
+
+    }
 }
 
 export default new ReportsController();
