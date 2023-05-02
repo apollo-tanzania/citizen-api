@@ -4,6 +4,7 @@ import { PutReportDto } from '../dto/report/putReport';
 import { PatchReportDto } from '../dto/report/patchReport';
 import { CreateReportDto } from '../dto/report/createReport';
 import { QueryParams } from '../repository/utils/createPaginatedQuery';
+import { PatchReportVerificationLogDto } from '../dto/reportVerificationLog/patchReportVerificationLog';
 
 class ReportService implements CRUD {
     async create(resource: CreateReportDto) {
@@ -28,6 +29,14 @@ class ReportService implements CRUD {
 
     async readById(id: string) {
         return ReportRepository.getReportById(id);
+    }
+
+    async approveById(id: string, resource: PatchReportVerificationLogDto): Promise<any> {
+        return ReportRepository.approveReport(id, resource);
+    }
+
+    async disapproveById(id: string, resource: PatchReportVerificationLogDto): Promise<any> {
+        return ReportRepository.disapproveReport(id, resource);
     }
 }
 
