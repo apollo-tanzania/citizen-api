@@ -4,9 +4,9 @@ export interface QueryParams {
     page?: number;
     limit?: number;
     filter?: FilterQuery<{}>;
-    sort?: Record<string, unknown>;
+    sort?: any;
 }
-
+// type MongooseModel<T> = Model<T & Document>;
 /**
  *  Query documents with pagination, filtering and sorting
  * @param Model 
@@ -15,7 +15,8 @@ export interface QueryParams {
  */
 async function queryWithPagination<T extends Document>(
     Model: Model<T>,
-    queryParams: QueryParams
+    queryParams: QueryParams,
+    populate?: any
 ) {
 
     try {
@@ -26,6 +27,9 @@ async function queryWithPagination<T extends Document>(
             .skip(Number(limit) * (Number(page) - 1))
             .limit(Number(limit))
 
+        if(populate){
+            query.populate(populate);
+        }
         const results = await query.exec()
 
         const count = await Model.countDocuments(filter)
