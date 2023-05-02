@@ -101,7 +101,7 @@ class CommonPermissionMiddleware {
                     });
                 }
             } catch (e) {
-                log(e);
+                // log(e);
             }
         };
     }
