@@ -1,7 +1,9 @@
 import express from 'express';
-import { isObjectEmpty } from '../common/helpers/utils';
+import { createMongooseObjectIDInstance, isObjectEmpty } from '../common/helpers/utils';
 import permissionLogService from '../service/permissionLog';
 import reportService from '../service/report';
+import reportVerificationLogService from '../service/reportVerificationLog';
+
 
 class MiscellaneousMiddleware {
 
@@ -16,8 +18,10 @@ class MiscellaneousMiddleware {
             next();
         } else {
             res.status(404).send({
-                status: "Validation Error",
-                message: `Log ${req.params.permissionLogId} not found`,
+                error: {
+                    status: "Validation Error",
+                    message: `Log ${req.params.permissionLogId} not found`,
+                }
             });
         }
     }
@@ -33,9 +37,47 @@ class MiscellaneousMiddleware {
             next();
         } else {
             res.status(404).send({
-                status: 'Validation Error',
-                message: `Report ${req.params.reportId} not found`,
+                error: {
+                    status: 'Validation Error',
+                    message: `Report ${req.params.reportId} not found`,
+                }
             });
+        }
+    }
+
+    async validateReportVerificationLogExists(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        try {
+            // Use it to validate ID if using mongo
+            const isValidReportVerificationLogId = createMongooseObjectIDInstance(req.params.reportVerificationLogId)
+
+            if (!isValidReportVerificationLogId) return res.status(404).send({
+                errors: [
+                    {
+                        paramName: "reportVerificationLogId",
+                        message: "Invalid value",
+                        location: "params"
+                    }
+                ]
+            })
+
+            const reportVerificationLog = await reportVerificationLogService.readById(req.params.reportVerificationLogId);
+
+            if (reportVerificationLog) {
+                res.locals.reportVerificationLog = reportVerificationLog;
+                next();
+            } else {
+                res.status(404).send({
+                    error: {
+                        message: `Report verificaion log ${req.params.reportVerificationLogId} not found`,
+                    }
+                });
+            }
+        } catch (error) {
+            res.status(500).send(error);
         }
     }
 
