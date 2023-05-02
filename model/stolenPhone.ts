@@ -1,9 +1,22 @@
-import { Types } from "mongoose";
+import {  Document } from "mongoose";
 import mongooseService from "../common/services/mongoose.service";
-const { Schema, model } = mongooseService.getMongoose();
+const { Schema, model, } = mongooseService.getMongoose();
 
+interface IStolenPhone extends Document {
+    imei1: number;
+    imei2?: number;
+    imei3?: number;
+    name: string;
+    brand: string;
+    modelName: string;
+    manufacturer: string;
+    color?: string;
+    capacity: string;
+    imageUrl?: string
+    countReportedStolenOrLost: number;
+}
 // Store information about the phones that have been reported as stolen or lost
-const StolenPhoneSchema = new Schema({
+const StolenPhoneSchema = new Schema<IStolenPhone>({
     imei1: {
         type: Number,
         maxlength: 15,
@@ -43,7 +56,9 @@ const StolenPhoneSchema = new Schema({
         type: String,
         required: true
     },
-    countReportedStolenOrLost: Number
+    countReportedStolenOrLost: {
+        type: Number
+    }
 })
-const StolenPhoneModel = model('stolenPhone', StolenPhoneSchema);
+const StolenPhoneModel = model<IStolenPhone>('stolenPhone', StolenPhoneSchema);
 export default StolenPhoneModel;

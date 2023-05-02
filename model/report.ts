@@ -1,7 +1,32 @@
+import { Document } from "mongoose";
 import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
-const LostPhoneReportSchema = new Schema({
+export interface ILostPhoneReport extends Document {
+    phone: {
+        imei1: number,
+        imei2?: number,
+        imei3?: number
+    },
+    incident: {
+        date: string,
+        place: string,
+        depossession: string,
+        brief: string
+    },
+    flags: string,
+    rb?: string,
+    verified: boolean,
+    victim: {
+        firstname: string,
+        middlename: string,
+        lastname: string,
+        username?: string
+    }
+    originalReportId?: string
+}
+
+const LostPhoneReportSchema = new Schema<ILostPhoneReport>({
     phone: {
         imei1: {
             type: Number,
@@ -77,6 +102,6 @@ const LostPhoneReportSchema = new Schema({
 
 }, { timestamps: true });
 
-const LostPhoneReportModel = model('report', LostPhoneReportSchema);
+const LostPhoneReportModel = model<ILostPhoneReport>('report', LostPhoneReportSchema);
 export default LostPhoneReportModel;
 
