@@ -1,10 +1,12 @@
 export interface CreatePhoneDto {
-    imei1: Number,
-    imei2: Number,
-    imei3: Number
-    name: String,
-    brand: String,
-    model: String,
-    manufacturer: String,
-    imageUrl: String
+    imei1: number,
+    imei2?: number,
+    imei3?: number
+    name: string,
+    brand: string,
+    modelName: string,
+    manufacturer: string,
+    color?: string,
+    capacity: string,
+    imageUrl: string
 }
