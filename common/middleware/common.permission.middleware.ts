@@ -129,7 +129,7 @@ class CommonPermissionMiddleware {
                 permissionFlagLong = Long.fromBits(2, PermissionFlag.ADMIN_PERMISSION)
                 userPermissionFlagsLong = Long.fromBits(2, userPermissionFlags)
 
-                if ((userPermissionFlagsLong.add(permissionFlagLong).toNumber)) { // bitwise AND operator for Long type values from Long.js library
+                if ((userPermissionFlagsLong.add(permissionFlagLong).toNumber())) { // bitwise AND operator for Long type values from Long.js library
                     return next();
                 } else {
                     return res.status(403).send();
