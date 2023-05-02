@@ -101,7 +101,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 jwtMiddleware.extractCurrentUserId,
                 ReportsMiddleware.extractReportApprovalRequestBody(),
                 permissionMiddleware.permissionFlagRequired(PermissionFlag.APPROVE_REPORTS),
-                ReportsController.patch
+                ReportsController.approveReport
             )
 
         this.app
@@ -114,7 +114,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 jwtMiddleware.extractCurrentUserId,
                 ReportsMiddleware.extractReportDispprovalRequestBody(),
                 permissionMiddleware.permissionFlagRequired(PermissionFlag.DISAPPROVE_REPORTS),
-                ReportsController.patch
+                ReportsController.disapproveReport
             )
 
         return this.app;
