@@ -5,6 +5,8 @@
  * @returns 
  */
 
+import { ObjectId, Types } from "mongoose";
+
 export function isObjectEmpty(object: object) {
     // Check if object is null or undefined
     if (object === null) {
@@ -77,6 +79,18 @@ export default function extractParamsFromQuery(query: Record<string, any>) {
     } catch (error) {
         return null
     }
+}
 
-
+/**
+ * Returns new ObjectId instance, otherwise returns null
+ * @param id 
+ * @returns 
+ */
+export function createMongooseObjectIDInstance(id?: string | number | Types._ObjectId | undefined){
+    try {
+        const objectIdInstance = new Types.ObjectId(id)
+        return objectIdInstance ? objectIdInstance : null
+    } catch (error) {
+        return null
+    }
 }
