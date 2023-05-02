@@ -83,6 +83,8 @@ export default function extractParamsFromQuery(query: Record<string, any>) {
 
 /**
  * Returns new ObjectId instance, otherwise returns null
+ * 
+ * NB: It works if the id is a mongo ObjectId instance only
  * @param id 
  * @returns 
  */
