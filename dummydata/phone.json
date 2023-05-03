@@ -98,5 +98,54 @@
             "status": false
           }
         }
-      }
+      },
+      {
+        "id": "2",
+        "success": true,
+        "query": 864934040840626,
+        "data": {
+            "tac": 86493404,
+            "serial": 84062,
+            "controlNumber": 6,
+            "valid": true,
+            "device_id": null,
+            "device_image": null,
+            "device_spec": {
+                "sim_slots": "2",
+                "os": null,
+                "os_family": "",
+                "aliases": [],
+                "bluetooth": null,
+                "usb": null,
+                "wlan": null,
+                "nfc": null,
+                "speed": null,
+                "nettech": null
+            },
+            "name": "FortuneShip FP789L-T",
+            "brand": "FortuneShip",
+            "model": "FP789L-T",
+            "models": [
+                "FP789L-T"
+            ],
+            "manufacturer": "Guizhou Fortuneship Technology Co Ltd",
+            "type": "Smartphone",
+            "frequency": [
+                "LTE FDD BAND 1",
+                "LTE FDD BAND 3",
+                "LTE FDD BAND 7",
+                "LTE FDD BAND 8",
+                "LTE FDD BAND 20",
+                "GSM850 (GSM800)",
+                "GSM 900",
+                "GSM 1800",
+                "GSM 1900",
+                "WCDMA FDD Band 1",
+                "WCDMA FDD Band 8"
+            ],
+            "blacklist": {
+                "status": false
+            }
+        }
+    }
 ]
