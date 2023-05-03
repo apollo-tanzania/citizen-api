@@ -11,7 +11,7 @@ interface IStolenPhone extends Document {
     modelName: string;
     manufacturer: string;
     color?: string;
-    capacity: string;
+    capacity: string; // TODO: change this to storage becasue it makes a lot of sense
     imageUrl?: string
     countReportedStolenOrLost: number;
 }
