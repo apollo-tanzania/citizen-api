@@ -88,11 +88,50 @@ export default function extractParamsFromQuery(query: Record<string, any>) {
  * @param id 
  * @returns 
  */
-export function createMongooseObjectIDInstance(id?: string | number | Types._ObjectId | undefined){
+export function createMongooseObjectIDInstance(id?: string | number | Types._ObjectId | undefined) {
     try {
         const objectIdInstance = new Types.ObjectId(id)
         return objectIdInstance ? objectIdInstance : null
     } catch (error) {
         return null
+    }
+}
+
+/**
+ * Returns true if the given number is valid IMEI, otherwise false
+ * @param imei 
+ * @returns 
+ */
+export function validateIMEINumber(imei: string) {
+    try {
+        // Remove all non-numeric characters
+        imei = imei.replace(/[^0-9]/g, '')
+
+        if (imei.length !== 15) {
+            return false
+        }
+
+        // Luhn's algorithm
+        const sum = imei
+            // Remove the last digit
+            .slice(0, -1)
+            // Separate the digits
+            .split('')
+            //Starting from the rightmost digit, double every second digit
+            .map((digit, index) => {
+                const num = parseInt(digit, 10)
+                return index % 2 === 0 ? num : num * 2
+            })
+            // if the double digit is greater than 9, add two digits together to get as single digit.
+            // Then sum up the digits
+            .reduce((sum, digit) => sum + (digit > 9 ? digit - 9 : digit))
+
+        //checksum digit is the number to be added for the sum to reach rounded off nearest ten
+        const checksum = (10 - (sum % 10)) % 10;
+        // compare
+        return parseInt(imei.slice(-1), 10) === checksum
+
+    } catch (error) {
+        return false
     }
 }
