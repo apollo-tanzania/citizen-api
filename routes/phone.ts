@@ -10,6 +10,7 @@ import BodyValidationMiddleware from '../common/middleware/body.validation.middl
 import { body } from 'express-validator';
 
 import express from 'express';
+import { validateIMEINumber } from '../common/helpers/utils';
 
 export class PhonesRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -27,7 +28,7 @@ export class PhonesRoutes extends CommonRoutesConfig {
                 PhoneController.listPhones
             )
             .post(
-                // body('email').isEmpty(),
+                body('email').isEmpty(),
                 // body('password')
                 //     .isLength({ min: 5 })
                 //     .withMessage('Must include password (5+ characters)'),
@@ -66,7 +67,7 @@ export class PhonesRoutes extends CommonRoutesConfig {
         ]);
 
         this.app.patch(`/phones/:phoneId`, [
-            body('imei1').isInt().optional(),
+            body('imei1').isInt().optional().custom(validateIMEINumber),
             body('imei2').isInt().optional(),
             body('imei3').isInt().optional(),
             body('name').isString().optional(),
@@ -83,19 +84,15 @@ export class PhonesRoutes extends CommonRoutesConfig {
             PhoneController.patch,
         ]);
 
-        /**
-         * This route does not currently require extra permissions.
-         *
-         * Please update it for admin usage in your own application!
-        //  */
-        // this.app.put(`/users/:userId/permissionFlags/:permissionFlags`, [
-        //     jwtMiddleware.validJWTNeeded,
-        //     permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
-        //     permissionMiddleware.permissionFlagRequired(
-        //         PermissionFlag.FREE_PERMISSION
-        //     ),
-        //     UsersController.updatePermissionFlags,
-        // ]);
+        this.app.param('IMEI', PhoneMiddleware.extractAndValidatePhoneIMEI)
+        this.app
+        .route(`/phones/verifications/:IMEI`)
+        .all(    
+            // UsersMiddleware.validateUserExists,
+            // jwtMiddleware.validJWTNeeded,
+            // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+        )
+        .get(PhoneController.getPhoneReportByIMEI)
 
         return this.app;
     }

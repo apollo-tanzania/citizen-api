@@ -24,6 +24,15 @@ class PhoneController {
         res.status(200).send(phone);
     }
 
+    async getPhoneReportByIMEI(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const phone = await phoneService.readPhoneReportByIMEI(req.body.imei);
+            res.status(200).send(phone);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async createPhone(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             const phoneResponse = await phoneService.create(req.body);

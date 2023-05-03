@@ -34,6 +34,14 @@ class PhoneService implements CRUD {
     async readById(id: string) {
         return ReportRepository.getReportById(id);
     }
+
+    // async readByIMEI(imei: number) {
+    //     return PhoneRepository.getReportById(id);
+    // }
+
+    async readPhoneReportByIMEI(imei: number) {
+        return PhoneRepository.getPhoneReportByIMEI(imei);
+    }
 }
 
 export default new PhoneService();

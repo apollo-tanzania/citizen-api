@@ -7,6 +7,8 @@ import { CreatePhoneDto } from '../dto/phone/createPhone';
 import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
 import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
+import { ClientSession } from 'mongoose';
+import mongooseService from '../common/services/mongoose.service';
 
 const log: debug.IDebugger = debug('app:phones-dao');
 
@@ -44,6 +46,51 @@ class PhoneRepository {
 
     async getPhoneById(phoneId: string) {
         return this.StolenPhone.findOne({ _id: phoneId }).populate('Phone').exec();
+    }
+
+    async getPhoneReportByIMEI(imei: number) {
+        const { startSession } = mongooseService.getMongoose();
+        const session: ClientSession = await startSession();
+
+        session.startTransaction(); // Start transaction
+        try {
+
+            const phone = await this.StolenPhone.findOne({
+                $or: [
+                    { imei1: imei },
+                    { imei2: imei },
+                    { imei3: imei }
+                ]
+            }).exec()
+
+            if (!phone) {
+                const phoneNotFoundError = new Error('Phone not found');
+                phoneNotFoundError.name = "NotFound";
+                phoneNotFoundError.message = "Phone not reported stolen or lost in our database";
+                throw phoneNotFoundError;
+            }
+
+            const reportsFoundWithTheIMEI = await this.Report.find({
+                $or: [
+                    { "phone.imei1": phone.imei1 },
+                    { "phone.imei2": phone.imei1 },
+                    { "phone.imei3": phone.imei1 },
+                ]
+            }).exec()
+
+            await session.commitTransaction()
+
+            return {
+                phone,
+                reports: reportsFoundWithTheIMEI
+            }
+
+        } catch (error) {
+            await session.abortTransaction()
+            throw error
+        } finally {
+            session.endSession()
+        }
     }
 
     async getPhones(queryParams: QueryParams) {
