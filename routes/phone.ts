@@ -87,11 +87,6 @@ export class PhonesRoutes extends CommonRoutesConfig {
         this.app.param('IMEI', PhoneMiddleware.extractAndValidatePhoneIMEI)
         this.app
         .route(`/phones/verifications/:IMEI`)
-        .all(    
-            // UsersMiddleware.validateUserExists,
-            // jwtMiddleware.validJWTNeeded,
-            // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
-        )
         .get(PhoneController.getPhoneReportByIMEI)
 
         return this.app;
