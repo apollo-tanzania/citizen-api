@@ -1,12 +1,11 @@
+import { ObjectId, Types } from "mongoose";
+
 /**
  * Returns true if the object is empty, otherwise false
  * 
  * @param object 
  * @returns 
  */
-
-import { ObjectId, Types } from "mongoose";
-
 export function isObjectEmpty(object: object) {
     // Check if object is null or undefined
     if (object === null) {
