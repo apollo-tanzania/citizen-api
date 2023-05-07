@@ -1,4 +1,8 @@
 import express from 'express';
+import { BadGateWayError } from '../errors/BadGateWayError';
+import { BadRequestError } from '../errors/BadRequestError';
+import { ResourceNotFoundError } from '../errors/ResourceNotFoundError';
+import buildApiResponse from '../common/api/buildApiResponse';
 
 function errorHandler(
     error: Error,
@@ -6,18 +10,25 @@ function errorHandler(
     response: express.Response,
     next: express.NextFunction
 ) {
-    console.log(error);
-    response.status(500).send({
-        message: "Something went wrong. Try again later",
-        error: {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-        }
-        
-        // name: err.name,
-        // message: err.message,
-        // error: err?.stack
-    })
+
+    if (error instanceof BadGateWayError) {
+        response.locals.error = error
+        return buildApiResponse(response, error.status, false)
+    }
+
+    if (error instanceof BadRequestError) {
+        response.locals.error = error
+        return buildApiResponse(response, error.status, false, "Error")
+    }
+
+    if (error instanceof ResourceNotFoundError) {
+        response.locals.error = error
+        return buildApiResponse(response, error.status, false, "Error")
+    }
+
+    response.locals.error = error;
+    buildApiResponse(response, 500, false, "Error")
+
+
 }
 export default errorHandler;
