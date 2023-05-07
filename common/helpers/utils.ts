@@ -98,7 +98,7 @@ export function createMongooseObjectIDInstance(id?: string | number | Types._Obj
 
 /**
  * Returns true if the given number is valid IMEI, otherwise false
- * @param imei 
+ * @param imei 15 characters of digits. E.g 723746819237237
  * @returns 
  */
 export function validateIMEINumber(imei: string) {
@@ -133,4 +133,40 @@ export function validateIMEINumber(imei: string) {
     } catch (error) {
         return false
     }
+}
+
+/**
+ * Returns a number representing device IMEI, otherwise returns null
+ * @param TAC abbreviation for man
+ * @param SNR abbreviation for serial number which represents the manufacturer unique device identity
+ * @param CD abbreviation for checkdigit or can also be refered to as checksum
+ */
+export function generateImeiId(TAC: number, SNR: number, CD: number) {
+    try {
+        // Cast to string
+        let tac = TAC.toString();
+        let serial = SNR.toString();
+        let checksum = CD.toString()
+
+        // Sanitize
+
+        // Concatenation
+        let IMEIString = tac + serial + checksum;
+
+        //Sanitize
+        IMEIString.trim()
+
+        // Check if the IMEI is valid
+        const isValid = validateIMEINumber(IMEIString)
+
+        if(!isValid) return null
+
+        // Convert IMEI to number
+        const IMEI = Number(IMEIString)
+
+        return IMEI;
+    } catch (error) {
+        return null
+    }
+
 }
