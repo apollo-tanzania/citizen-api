@@ -30,15 +30,16 @@ async function queryWithPagination<T extends Document>(
         if(populate){
             query.populate(populate);
         }
-        const results = await query.exec()
+        const data = await query.exec()
 
         const count = await Model.countDocuments(filter)
 
         return {
-            results,
+            data,
             totalPages: Math.ceil(count / Number(limit)),
             currentPage: page,
             totalCount: count,
+            perPage: Number(limit)
         }
     } catch (error) {
         throw error
