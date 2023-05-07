@@ -24,6 +24,8 @@ import { PhonesRoutes } from './routes/phone';
 import { LawEnforcementRoutes } from './routes/lawEnforcement';
 import { LawEnforcementVerificationHistoryRoutes } from './routes/lawEnforcementsVerificationHistory';
 import errorHandler from './middleware/errorHandler';
+import { ImeiRoutes } from './routes/imei';
+import { PermissionRoutes } from './routes/permission';
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
@@ -64,16 +66,9 @@ routes.push(new AdminsRoutes(app));
 routes.push(new PhonesRoutes(app));
 routes.push(new LawEnforcementRoutes(app));
 routes.push(new LawEnforcementVerificationHistoryRoutes(app));
+routes.push(new ImeiRoutes(app));
+routes.push(new PermissionRoutes(app));
 
-
-// app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-//     if(!err) {
-//         return next();
-//     }
-
-//     res.status(500).send(err);
-
-// });
 app.use(errorHandler)
 
 
