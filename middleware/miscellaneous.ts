@@ -99,6 +99,15 @@ class MiscellaneousMiddleware {
         next();
     }
 
+    async extractPermissionId(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        req.body.id = req.params.permissionId;
+        next();
+    }
+
     async extractReportId(
         req: express.Request,
         res: express.Response,
