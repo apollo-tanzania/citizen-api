@@ -4,7 +4,7 @@ export class BadGateWayError extends Error {
         super();
         this.name = this.constructor.name;
         this.message = message || "Bad Gateway Error";
-        this.status = status || 500;
+        this.status = status || 502;
 
     }
 }

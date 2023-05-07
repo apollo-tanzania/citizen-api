@@ -4,6 +4,6 @@ export class ResourceNotFoundError extends Error {
         super();
         this.name = this.constructor.name;
         this.message = message || "Resource not found";
-        this.status = status || 500;
+        this.status = status || 404;
     }
 }
