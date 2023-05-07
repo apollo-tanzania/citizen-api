@@ -1,12 +1,14 @@
 import debug from 'debug';
 import ReportModel from '../model/report';
-import { PatchPhoneDto } from '../dto/phone/patchPhone';
-import { PutPhoneDto } from '../dto/phone/putPhone';
-import { CreatePhoneDto } from '../dto/phone/createPhone';
+import { CreatePermissionDto } from '../dto/permission/createPermission';
+import { PatchPermissionDto } from '../dto/permission/patchPermssion';
+import { PutPermissionDto } from '../dto/permission/putPermssion';
 import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
 import PermissionModel from '../model/permission';
 import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
+import customMongooseORMQuery from './utils/customMongooseORMQuery';
+
 
 const log: debug.IDebugger = debug('app:permissions-dao');
 
@@ -21,7 +23,7 @@ class PermissionRepository {
         log('Created new instance of Permission Repository');
     }
 
-    async addPermission(permissionFields: CreatePhoneDto) {
+    async addPermission(permissionFields: CreatePermissionDto) {
 
         try {
             const permission = new this.Permission({
@@ -40,11 +42,15 @@ class PermissionRepository {
     }
 
     async removePermissionById(permissionId: string) {
-        return this.Permission.deleteOne({ id: permissionId }).exec();
+        return this.Permission.deleteOne({ _id: permissionId }).exec();
     }
 
     async getPermissionById(permissionId: string) {
-        return this.Permission.findOne({ id: permissionId }).exec();
+        return this.Permission.findOne({ _id: permissionId }).exec();
+    }
+
+    async getPermissionWithQueryPropertyById(permissionId: string) {
+        return customMongooseORMQuery.findById(this.Permission, permissionId)
     }
 
     async getPermissions(queryParams: QueryParams) {
@@ -53,7 +59,7 @@ class PermissionRepository {
 
     async updatePermissionById(
         permissionId: string,
-        permissionFields: PatchPhoneDto | PutPhoneDto
+        permissionFields: PatchPermissionDto | PutPermissionDto
     ) {
         const existingPermission = await this.Permission.findOneAndUpdate(
             { id: permissionId },
