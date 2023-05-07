@@ -1,7 +1,7 @@
 import express from 'express';
 import lawEnforcementVerificationHistoryService from '../service/lawEnforcementVerificationHistory';
 import debug from 'debug';
-import apiResponse from '../common/api/apiResponse';
+import apiResponse from '../common/api/buildApiResponse';
 import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 import extractParamsFromQuery from '../common/helpers/utils';
 

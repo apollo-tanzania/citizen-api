@@ -5,7 +5,7 @@ import lawEnforcementService from '../service/lawEnforcement';
 import argon2 from 'argon2';
 import debug from 'debug';
 import { PatchUserDto } from '../dto/patchUser';
-import apiResponse from '../common/api/apiResponse';
+import apiResponse from '../common/api/buildApiResponse';
 import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
 import extractParamsFromQuery from '../common/helpers/utils';
 

@@ -1,8 +1,8 @@
 import express, { response } from 'express';
 import reportService from '../service/report';
 import debug from 'debug';
-import apiResponse from '../common/api/apiResponse';
 import extractParamsFromQuery from '../common/helpers/utils';
+import buildApiResponse from '../common/api/buildApiResponse';
 
 
 const log: debug.IDebugger = debug('app:users-controller');
@@ -31,7 +31,7 @@ class ReportsController {
         try {
             const reportResponse = await reportService.create({ ...req.body });
             res.locals.data = reportResponse
-            apiResponse(res, 201);
+            buildApiResponse(res, 201, true);
         } catch (error) {
             next(error);
         }
