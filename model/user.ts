@@ -43,6 +43,10 @@ const userSchema = new Schema({
         enum: [Role.ADMIN, Role.LAW_ENFORCEMENT_ADMIN, Role.CITIZEN, Role.LAW_ENFORCEMENT, Role.GUEST],
         default: Role.GUEST
     },
+    enabled: {
+        type: Boolean,
+        default: true
+    }
     // permissionFlags: Number,
 }, { _id: false, id: false });
 

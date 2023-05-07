@@ -3,7 +3,6 @@ import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
 export interface IImei extends Document {
-    id: number;
     tac: number;
     serial: number;
     checkDigit: number;
@@ -13,7 +12,7 @@ export interface IImei extends Document {
     deviceSpecification: {
         simSlots: number | null;
         operatingSystem: string | null;
-        operatingSystemFamily: string;
+        operatingSystemFamily: string | null;
         aliases: string[] | null,
         bluetooth: string[] | null,
         usb: string[] | null,
@@ -33,7 +32,7 @@ export interface IImei extends Document {
 }
 
 const ImeiSchema = new Schema<IImei>({
-    _id: {
+    number: {
         type: Number,
         maxlength: 15,
         required: true
@@ -53,56 +52,51 @@ const ImeiSchema = new Schema<IImei>({
         maxlength: 1,
         required: true
     },
-    isValid: {
+    valid: {
         type: Boolean,
         default: null
     },
     deviceSpecification: {
         simSlots: {
-            type: Number,
+            type: Number ,
             default: 1
         },
         operatingSystem: {
-            type: Types.Array<String>,
+            type: String,
             default: null,
-            required: true
-
         },
-        operatingSystemFamily: String,
-        aliases: {
-            type: Types.Array<String>,
+        operatingSystemFamily: {
+            type: String,
             default: null,
-            required: true
+        },
+        aliases: {
+            type: [String],
+            default: null,
+            // required: true
         },
         bluetooth: {
-            type: Types.Array<String>,
+            type: [String],
             default: null,
-            required: true
         },
         usb: {
-            type: Types.Array<String>,
+            type: [String],
             default: null,
-            required: true
         },
         wlan: {
-            type: Types.Array<String>,
+            type: [String],
             default: null,
-            required: true
         },
         nfc: {
-            type: Types.Array<String>,
+            type: Boolean,
             default: null,
-            required: true
         },
         speed: {
-            type: Types.Array<String>,
+            type: [String],
             default: null,
-            required: true
         },
         nettech: {
-            type: Types.Array<String>,
+            type: [String],
             default: null,
-            required: true
         },
     },
     name: {
@@ -118,7 +112,7 @@ const ImeiSchema = new Schema<IImei>({
         required: true
     },
     models:{
-        type: Types.Array<String>,
+        type: [String],
         default: null,
         required: true
     },
@@ -128,9 +122,8 @@ const ImeiSchema = new Schema<IImei>({
     },
     deviceType: String,
     frequency:{
-        type: Types.Array<String>,
+        type: [String],
         default: null,
-        required: true
     },
     blackListStatus: {
         type: Boolean,
