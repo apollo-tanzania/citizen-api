@@ -1,10 +1,10 @@
 import PhoneRepository from '../repository/phone';
-import ReportRepository from '../repository/report';
 import { CRUD } from '../common/interfaces/crud.interface';
-import { PutReportDto } from '../dto/report/putReport';
-import { PatchReportDto } from '../dto/report/patchReport';
+import { PatchPhoneDto } from '../dto/phone/patchPhone';
+import { PutPhoneDto } from '../dto/phone/putPhone';
 import { CreatePhoneDto } from '../dto/phone/createPhone';
 import { QueryParams } from '../repository/utils/createPaginatedQuery';
+
 
 class PhoneService implements CRUD {
     async create(resource: CreatePhoneDto) {
@@ -23,21 +23,17 @@ class PhoneService implements CRUD {
         return PhoneRepository.getPhones(queryParams);
     }
 
-    async patchById(id: string, resource: PatchReportDto): Promise<any> {
-        return ReportRepository.updateReportById(id, resource);
+    async patchById(id: string, resource: PatchPhoneDto): Promise<any> {
+        return PhoneRepository.updatePhoneById(id, resource);
     }
 
-    async putById(id: string, resource: PutReportDto): Promise<any> {
-        return ReportRepository.updateReportById(id, resource);
+    async putById(id: string, resource: PutPhoneDto): Promise<any> {
+        return PhoneRepository.updatePhoneById(id, resource);
     }
 
     async readById(id: string) {
-        return ReportRepository.getReportById(id);
+        return PhoneRepository.getPhoneById(id);
     }
-
-    // async readByIMEI(imei: number) {
-    //     return PhoneRepository.getReportById(id);
-    // }
 
     async readPhoneReportByIMEI(imei: number) {
         return PhoneRepository.getPhoneReportByIMEI(imei);
