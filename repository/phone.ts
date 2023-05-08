@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import debug from 'debug';
 import ReportModel from '../model/report';
 import { PatchPhoneDto } from '../dto/phone/patchPhone';
@@ -7,8 +6,12 @@ import { CreatePhoneDto } from '../dto/phone/createPhone';
 import PhoneModel from '../model/phone';
 import StolenPhoneModel from '../model/stolenPhone';
 import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
-import { ClientSession } from 'mongoose';
+import { ClientSession, Types } from 'mongoose';
 import mongooseService from '../common/services/mongoose.service';
+import { CustomError } from '../errors/CustomError';
+import imeiRepository from './imei'
+import { strings } from '../common/helpers/constants';
+
 
 const log: debug.IDebugger = debug('app:phones-dao');
 
@@ -64,10 +67,18 @@ class PhoneRepository {
             }).exec()
 
             if (!phone) {
-                const phoneNotFoundError = new Error('Phone not found');
-                phoneNotFoundError.name = "NotFound";
-                phoneNotFoundError.message = "Phone not reported stolen or lost in our database";
-                throw phoneNotFoundError;
+                const imeiInfo = (await imeiRepository.search(imei.toString())).toObject()
+
+                return {
+                    reportedStolen: false,
+                    remarks: "Phone not reported stolen or lost in our database",
+                    phone: {
+                        ...imeiInfo,
+                        model: imeiInfo._model
+                    }
+                }
+                // const phoneNotFoundError = new CustomError(undefined, "Phone not reported stolen or lost in our database", 404);
+                // throw phoneNotFoundError;
             }
 
             const reportsFoundWithTheIMEI = await this.Report.find({
@@ -78,10 +89,56 @@ class PhoneRepository {
                 ]
             }).exec()
 
+            const imeiDoc = await imeiRepository.search(imei.toString());
+
+            const imeiInfo = imeiDoc.toObject()
+
             await session.commitTransaction()
 
+            let numberOfStolenReportsForThisPhone = phone.countReportedStolenOrLost
+            let numberOfVerifiedStolenReports = reportsFoundWithTheIMEI.filter(report => report.verified === true).length;
+
+            let verifiedRatio = numberOfVerifiedStolenReports / numberOfStolenReportsForThisPhone
+
+            function generateRemarkPhrase(numReports: number, numVerifiedReports: number) {
+                let remark = ''
+                const { PHRASE1, PHRASE2, PHRASE3, PHRASE4 } = strings.REPORT_REMARK_PHRASE
+                if (numReports === 0) {
+                    remark = PHRASE1
+                }
+                else if (numReports === 1) {
+                    remark = PHRASE2
+                }
+                else {
+                    // if (verifiedRatio === 1) {
+                    //     remark = `This phone is reported stolen and the report the associated report(s) are verified and legit.`
+                    // } else if (verifiedRatio === 0.5) {
+                    //     remark = PHRASE3
+                    // } else if (verifiedRatio > 0.8) {
+                    //     remark = PHRASE3
+                    // } else if (verifiedRatio < 0.5) {
+                    //     remark = PHRASE3
+                    // }
+                    const reportWord = (numReports > 1) ? 'reports' : 'report'
+                    const verifiedReportWord = numVerifiedReports === 1 ? 'verified report' : 'verified reports'
+                    const verbWord = numVerifiedReports === 1 ? 'is' : 'are'
+
+                    remark = `This phone has been reported stolen. ${numReports} ${reportWord}, ${numVerifiedReports} of which ${verbWord} ${verifiedReportWord}`
+                }
+                return remark;
+            }
+
+            let remarkPhrase = generateRemarkPhrase(numberOfStolenReportsForThisPhone, numberOfVerifiedStolenReports)
             return {
-                phone,
+                reportedStolen: true,
+                numberOfStolenReportsForThisPhone: phone.countReportedStolenOrLost,
+                numberOfVerifiedStolenReportsForThisPhone: numberOfVerifiedStolenReports,
+                remark: remarkPhrase,
+                verifiedReportRatio: verifiedRatio,
+                phone: {
+                    ...imeiInfo,
+                    model: imeiInfo._model
+                },
                 reports: reportsFoundWithTheIMEI
             }
 
@@ -97,6 +154,10 @@ class PhoneRepository {
         return queryWithPagination(this.StolenPhone, queryParams)
     }
 
+    async getPhonesByDefaultQuery() {
+        return this.StolenPhone.find().exec();
+    }
+
     async updatePhoneById(
         phoneId: string,
         phoneFields: PatchPhoneDto | PutPhoneDto
@@ -108,6 +169,18 @@ class PhoneRepository {
         ).exec();
 
         return existingPhone;
+    }
+
+    private async getVerifiedReportsCount(stolenPhoneId: string) {
+        const queryResult = await this.StolenPhone.aggregate([
+            // Watch by id
+            { $match: { _id: Types.ObjectId(stolenPhoneId) } },
+            { $unwind: '$reports' },
+            { $match: { 'reports.verified': true } },
+            { $group: { _id: '$_id', verifiedReportsCount: { $sum: 1 } } }
+        ])
+
+        return queryResult.length ? queryResult[0].verifiedReportsCount : 0
     }
 }
 
