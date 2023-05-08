@@ -23,7 +23,8 @@ export interface IImei extends Document {
     };
     name: string;
     brand: string;
-    modelName: string;
+    // to avoid conflict with existing properties for mongoose, model and modelName properties
+    _model: string;
     models: string[];
     manufacturer: string;
     deviceType: string;
@@ -47,7 +48,7 @@ const ImeiSchema = new Schema<IImei>({
         maxlength: 7,
         required: true
     },
-    checkDigit:  {
+    checkDigit: {
         type: Number,
         maxlength: 1,
         required: true
@@ -58,7 +59,7 @@ const ImeiSchema = new Schema<IImei>({
     },
     deviceSpecification: {
         simSlots: {
-            type: Number ,
+            type: Number,
             default: 1
         },
         operatingSystem: {
@@ -107,11 +108,12 @@ const ImeiSchema = new Schema<IImei>({
         type: String,
         required: true
     },
-    modelName: {
+    // to avoid conflict with existing properties for mongoose, model and modelName properties
+    _model: {
         type: String,
         required: true
     },
-    models:{
+    models: {
         type: [String],
         default: null,
         required: true
@@ -121,7 +123,7 @@ const ImeiSchema = new Schema<IImei>({
         required: true
     },
     deviceType: String,
-    frequency:{
+    frequency: {
         type: [String],
         default: null,
     },
