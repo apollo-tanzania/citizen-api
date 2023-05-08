@@ -30,7 +30,8 @@ class ImeiRepository {
             if (!IMEI) throw new Error(`Invalid IMEI`)
             const imei = new this.Imei({
                 number: IMEI,
-                ...imeiFields
+                ...imeiFields,
+                _model: imeiFields.modelName
             });
             await imei.save();
             return IMEI;
@@ -98,7 +99,7 @@ class ImeiRepository {
                 "deviceSpecification.nettec": imeiInfo.device_spec.nettech,
                 brand: imeiInfo.brand,
                 name: imeiInfo.name,
-                modelName: imeiInfo.model,
+                _model: imeiInfo.model,
                 models: imeiInfo.models,
                 manufacturer: imeiInfo.manufacturer,
                 frequency: imeiInfo.frequency,
