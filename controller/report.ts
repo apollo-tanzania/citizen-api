@@ -4,7 +4,6 @@ import debug from 'debug';
 import extractParamsFromQuery from '../common/helpers/utils';
 import buildApiResponse from '../common/api/buildApiResponse';
 
-
 const log: debug.IDebugger = debug('app:users-controller');
 
 class ReportsController {

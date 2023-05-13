@@ -34,24 +34,53 @@ export interface IImei extends Document {
 
 const ImeiSchema = new Schema<IImei>({
     number: {
-        type: Number,
+        type: String,
         maxlength: 15,
-        required: true
+        minlength: 15,
+        required: true,
+        unique: true,
+        validate: {
+            validator: function (value: number | string) {
+                return /^\d{15}$/.test(String(value));
+            },
+            message: (props: { value: string; }) => `${props.value} is not a valid IMEI`
+        }
     },
     tac: {
-        type: Number,
+        type: String,
         maxlength: 8,
-        required: true
+        minLength: 8,
+        required: true,
+        validate: {
+            validator: function (value: number | string) {
+                return /^\d{8}$/.test(String(value));
+            },
+            message: (props: { value: string; }) => `${props.value} is not a valid TAC`
+        }
     },
     serial: {
-        type: Number,
-        maxlength: 7,
-        required: true
+        type: String,
+        maxlength: 6,
+        minlength: 6,
+        required: true,
+        validate: {
+            validator: function (value: number | string) {
+                return /^\d{6}$/.test(String(value));
+            },
+            message: (props: { value: string; }) => `${props.value} is not a valid serial number`
+        }
     },
     checkDigit: {
-        type: Number,
+        type: String,
         maxlength: 1,
-        required: true
+        minlength: 1,
+        required: true,
+        validate: {
+            validator: function (value: number | string) {
+                return /^\d{1}$/.test(String(value));
+            },
+            message: (props: { value: string; }) => `${props.value} is not a valid check digit`
+        }
     },
     valid: {
         type: Boolean,
@@ -123,6 +152,11 @@ const ImeiSchema = new Schema<IImei>({
         required: true
     },
     deviceType: String,
+    type: {
+        type: String,
+        enum: ["primary", "secondary"],
+        default: null
+    },
     frequency: {
         type: [String],
         default: null,
@@ -133,5 +167,6 @@ const ImeiSchema = new Schema<IImei>({
         required: true
     },
 });
+ImeiSchema.index({number: 1})
 const ImeiModel = model<IImei>('imei', ImeiSchema);
 export default ImeiModel;

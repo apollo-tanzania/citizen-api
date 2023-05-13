@@ -22,7 +22,7 @@ export async function extractUserPermission(email: string, role: Role) {
             userPermission = lawEnforcement.permissionFlags;
             return userPermission ? userPermission : null;
         }
-        if (role === Role.CITIZEN) {
+        if (role === Role.LOCAL) {
             return userPermission;
         }
         if (role === Role.GUEST) {

@@ -20,7 +20,7 @@ async function queryWithPagination<T extends Document>(
 ) {
 
     try {
-        const { page, limit, filter = {}, sort = {} } = queryParams;
+        const { page, limit, filter = {}, sort = {"_id": -1} } = queryParams;
 
         const query = Model.find(filter)
             .sort(sort)

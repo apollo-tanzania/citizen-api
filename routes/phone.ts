@@ -41,9 +41,9 @@ export class PhonesRoutes extends CommonRoutesConfig {
         this.app
             .route(`/phones/:phoneId`)
             .all(
-                UsersMiddleware.validateUserExists,
-                jwtMiddleware.validJWTNeeded,
-                permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+                // UsersMiddleware.validateUserExists,
+                // jwtMiddleware.validJWTNeeded,
+                // permissionMiddleware.onlySameUserOrAdminCanDoThisAction
             )
             .get(PhoneController.getPhoneById)
             .delete(PhoneController.removePhone);

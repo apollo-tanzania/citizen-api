@@ -1,30 +1,31 @@
 export interface PutReportDto {
   phone: {
-    imei1: number,
-    imei2?: number,
-    imei3?: number,
-    name: string,
-    brand: string,
-    model: string,
-    manufacturer: string,
+    imei1: number
+    imei2?: number
+    imei3?: number
+    name: string
+    brand: string
+    model: string
+    manufacturer: string
     imageUrl: string
   },
   incident: {
-    date: string,
-    place: string,
-    depossession: Depossession,
+    date: string
+    place: string
+    depossession: Depossession
     brief: string
   },
-  flags: Flag,
-  rb: string,
+  flags: Flag
+  rb: string
   verified: boolean,
   victim: {
-    firstname: string,
-    middlename: string,
+    firstname: string
+    middlename: string
     lastname: string,
     username?: string
   },
-  reasonForUnverification?: string,
+  status: string
+  reasonForUnverification?: string
   originalReportId?: string,
   authorizedBy?:string
 }

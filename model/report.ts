@@ -1,12 +1,16 @@
 import { Document } from "mongoose";
 import mongooseService from "../common/services/mongoose.service";
+import { phoneImeiSchema } from "../schema/imei";
+import { ReportStatus } from "../types";
 const { Schema, model } = mongooseService.getMongoose();
 
 export interface ILostPhoneReport extends Document {
+    stolenPhoneId: string;
     phone: {
         imei1: number,
         imei2?: number,
-        imei3?: number
+        imei3?: number,
+        storage?: number
     },
     incident: {
         date: string,
@@ -24,9 +28,44 @@ export interface ILostPhoneReport extends Document {
         username?: string
     }
     originalReportId?: string
+    status: string
 }
 
+
+
 const LostPhoneReportSchema = new Schema<ILostPhoneReport>({
+    stolenPhoneId: {
+        type: Schema.Types.ObjectId,
+        ref: 'stolenPhone',
+        required: true
+    },
+    // phone: {
+    //     imei1: {
+    //         type: Number,
+    //         maxlength: 15,
+    //         required: true
+    //     },
+    //     imei2: {
+    //         type: Number,
+    //         maxlength: 15,
+    //         required: false
+    //     },
+    //     imei3: {
+    //         type: Number,
+    //         maxlength: 15,
+    //         required: false
+    //     },
+    //     storage: {
+    //         type: Number,
+    //         maxlength: 4,
+    //         required: false
+    //     }
+    // },
+    // imeis:{
+    //     type: [phoneImeiSchema],
+    //     required: true
+    //     // default: []
+    // },
     phone: {
         imei1: {
             type: Number,
@@ -41,6 +80,11 @@ const LostPhoneReportSchema = new Schema<ILostPhoneReport>({
         imei3: {
             type: Number,
             maxlength: 15,
+            required: false
+        },
+        storage: {
+            type: Number,
+            maxlength: 4,
             required: false
         }
     },
@@ -98,6 +142,12 @@ const LostPhoneReportSchema = new Schema<ILostPhoneReport>({
         type: Schema.Types.ObjectId,
         ref: 'report',
         required: false
+    },
+    status: {
+        type: String,
+        enum: [ReportStatus.open, ReportStatus.recovered],
+        default: ReportStatus.open,
+        required: true
     }
 
 }, { timestamps: true });

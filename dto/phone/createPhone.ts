@@ -7,6 +7,6 @@ export interface CreatePhoneDto {
     modelName: string,
     manufacturer: string,
     color?: string,
-    capacity: string,
+    storage: string,
     imageUrl: string
 }

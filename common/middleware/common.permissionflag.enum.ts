@@ -3,7 +3,7 @@ export enum Role {
     MODERATOR = 'moderator',
     LAW_ENFORCEMENT_ADMIN = "law enforcement admin",
     LAW_ENFORCEMENT = "law enforcement",
-    CITIZEN = "citizen",
+    LOCAL = "local",
     GUEST = "guest"
 }
 
@@ -49,6 +49,7 @@ export enum PermissionFlag {
     ADMIN_PERMISSION = 8589934592,
     LAW_ENFORCEMENT_PERMISSION = 17179869184,
     MODERATOR_PERMISSION = 34359738368,
+    LOCAL_PERMISSION = 34359738368 * 2,
     // ALL_PERMISSION = 151115727451828646838272
     ALL_PERMISSION = 34359738368 * 16
 }

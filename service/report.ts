@@ -8,7 +8,8 @@ import { PatchReportVerificationLogDto } from '../dto/reportVerificationLog/patc
 
 class ReportService implements CRUD {
     async create(resource: CreateReportDto) {
-        return ReportRepository.addReport(resource);
+        // return ReportRepository.addReport(resource);
+        return ReportRepository.saveReport(resource);
     }
 
     async deleteById(id: string) {

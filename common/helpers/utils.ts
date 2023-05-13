@@ -1,4 +1,6 @@
 import { ObjectId, Types } from "mongoose";
+import { customObject } from "../../types";
+import express from "express";
 
 /**
  * Returns true if the object is empty, otherwise false
@@ -159,7 +161,7 @@ export function generateImeiId(TAC: number, SNR: number, CD: number) {
         // Check if the IMEI is valid
         const isValid = validateIMEINumber(IMEIString)
 
-        if(!isValid) return null
+        if (!isValid) return null
 
         // Convert IMEI to number
         const IMEI = Number(IMEIString)
@@ -167,6 +169,163 @@ export function generateImeiId(TAC: number, SNR: number, CD: number) {
         return IMEI;
     } catch (error) {
         return null
+    }
+
+}
+
+/**
+ * Returns a 15 digit number representing device IMEI, otherwise returns null
+ * @param TAC abbreviation for man
+ * @param SNR abbreviation for serial number which represents the manufacturer unique device identity
+ * @param CD abbreviation for checkdigit or can also be refered to as checksum
+ */
+export function generateImei(TAC: number, SNR: number, CD: number) {
+    try {
+        // Cast to string
+        let tac = TAC.toString();
+        let serial = SNR.toString();
+        let checksum = CD.toString()
+
+        // Sanitize
+
+        // Concatenation
+        let IMEIString = tac + serial + checksum;
+
+        //Sanitize
+        IMEIString.trim()
+
+        // Check if the IMEI is valid other words if it passes Luhn's algorithm
+        const isValid = validateIMEINumber(IMEIString)
+
+        if (!isValid) return null
+
+        // Convert IMEI to number
+        const IMEI = Number(IMEIString)
+
+        return IMEI;
+    } catch (error) {
+        return null
+    }
+
+}
+
+/**
+ * Compares two objects for similarity, and returns true if they are similar, otherwise false
+ * @param firstObject 
+ * @param secondObject 
+ * @param keysToCompare 
+ * @returns 
+ */
+export function compareObjects(firstObject: any, secondObject: any, keysToCompare: string[]) {
+
+    if (typeof firstObject !== 'object' || typeof secondObject !== 'object') {
+        return firstObject === secondObject;
+    }
+
+    for (const key in firstObject) {
+
+        if (!keysToCompare.includes(key)) {
+            continue; // ignore
+        }
+
+        const firstObjectValue = firstObject[key]
+        const secondObjectValue = secondObject[key]
+
+        if (typeof firstObjectValue === 'object' && typeof secondObjectValue === 'object') {
+
+            if (!compareObjects(firstObjectValue, secondObjectValue, keysToCompare)) {
+                return false;
+            }
+        } else if (firstObjectValue !== secondObjectValue) {
+            return false;
+        }
+    }
+    return true
+}
+
+export function fieldMatchValidator(value: any, arr: any[]) {
+    return arr.some(item => item === value)
+}
+
+/**
+ * Deletes props except those chosen
+ * @param object 
+ * @param keysToKeep 
+ */
+export function deletePropsExcept(object: customObject, keysToKeep: string[]) {
+    for (let prop in object) {
+        if (!keysToKeep.includes(prop)) {
+            delete object[prop]
+        }
+    }
+}
+
+export function isValueRepeated(value: any, arr: any[]) {
+    return arr.some(item => item === value)
+}
+
+export function validateFields(value: any, { req }: customObject) {
+    const { phone, ...otherFields } = req?.body
+
+    if (!phone?.imei1) {
+        throw new Error(`Imei is required`)
+    }
+
+    if (phone?.imei3 && !phone?.imei1) {
+        throw new Error(`Imei2 is required`)
+    }
+
+    return true;
+}
+
+/**
+ * Returns a value of the key
+ * @param object 
+ * @param keyString 
+ */
+export function getObjectValue(object: any, keyString: string) {
+    // the separator is ][
+    const keys = keyString.split(/[\[\]\.]+/).filter(key => key !== '')
+
+    let value = object;
+    for (const key of keys) {
+        if (!value.hasOwnProperty(key)) {
+            return undefined;
+        }
+        value = value[key];
+    }
+    return value;
+}
+
+/**
+ * Returns true if the values are unique, false otherwise
+ * @param arr 
+ * @returns 
+ */
+export function isArrayContainsUniqueValues(arr: any) {
+    const set = new Set(arr)
+    return set.size === arr.length
+}
+
+export function paddedNumber(value: number, expectedNumberLength: number) {
+    try {
+        let paddedNumber = ''
+        const number: string = value.toString() // convert the value to string
+        const expectedLength = expectedNumberLength;
+
+        if (number.length < expectedLength) {
+            const difference = expectedLength - number.length
+            // const paddedNumber = '0'.repeat(difference) + number;
+            paddedNumber = number.padStart(expectedLength, '0')
+
+            // return padded number in string type
+            return paddedNumber
+        }
+
+        // if no difference spotted between value length and expected length, then return the original value
+        return value
+    } catch (error) {
+        throw error;
     }
 
 }

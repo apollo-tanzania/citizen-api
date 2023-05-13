@@ -16,7 +16,7 @@ export interface Pagination {
 }
 
 export interface FoundDocument<T> {
-    query: string 
+    query: string
     data: Model<T>,
 }
 
@@ -61,4 +61,18 @@ export interface ImeiDBApiSuccessResponse {
         }
     }
 
+}
+
+export enum ReportStatus {
+    open = "open",
+    recovered = "recovered"
+}
+
+export type customObject = {
+    [key: string]: any
+}
+
+export interface Property {
+    name: string,
+    type: "phone" | "tablet" | "laptop"
 }

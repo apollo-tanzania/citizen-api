@@ -1,7 +1,8 @@
 import mongooseService from "../common/services/mongoose.service";
+import { phoneSchema } from "../schema/phone";
 const { Schema, model } = mongooseService.getMongoose();
 
-const CitizenSchema = new Schema({
+const LocalSchema = new Schema({
     username: {
         type: String,
         ref: 'user',
@@ -11,7 +12,11 @@ const CitizenSchema = new Schema({
         phone: String,
         email: String
 
+    },
+    phones: {
+        type: [phoneSchema],
+        default: []
     }
 });
-const CitizenModel = model('citizen', CitizenSchema);
-export default CitizenModel;
+const LocalModel = model('local', LocalSchema);
+export default LocalModel;

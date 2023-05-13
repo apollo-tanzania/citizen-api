@@ -1,6 +1,8 @@
 import express from 'express';
 import { isObjectEmpty } from '../common/helpers/utils';
 import reportService from '../service/report';
+import { isValidObjectId } from 'mongoose';
+import { BadRequestError } from '../errors/BadRequestError';
 
 class ReportsMiddleware {
     async validateReportExists(
@@ -8,16 +10,23 @@ class ReportsMiddleware {
         res: express.Response,
         next: express.NextFunction
     ) {
-        const report = await reportService.readById(req.params.reportId);
-        if (report) {
-            res.locals.report = report;
-            next();
-        } else {
-            res.status(404).send({
-                error: "Validation Error",
-                message: `Report ${req.params.reportId} not found`,
-            });
+        try {
+            if (!isValidObjectId(req.params.reportId)) throw new BadRequestError("Invalid ObjectId")
+
+            const report = await reportService.readById(req.params.reportId);
+            if (report) {
+                res.locals.report = report;
+                next();
+            } else {
+                res.status(404).send({
+                    error: "Validation Error",
+                    message: `Report ${req.params.reportId} not found`,
+                });
+            }
+        } catch (error) {
+            next(error);
         }
+
     }
 
     async extractReportId(
@@ -25,8 +34,14 @@ class ReportsMiddleware {
         res: express.Response,
         next: express.NextFunction
     ) {
-        req.body.id = req.params.reportId;
-        next();
+        try {
+            if (!isValidObjectId(req.params.reportId)) throw new BadRequestError("Invalid ID", 400);
+            req.body.id = req.params.reportId;
+            next();
+        } catch (error) {
+            next(error);
+        }
+
     }
 
     extractReportApprovalRequestBody() {
@@ -45,7 +60,7 @@ class ReportsMiddleware {
             let requestBodyObject = req.body;
 
             // Check if the request body as more or less than expected properties
-            if(!(Object.keys(requestBodyObject).length === selectedRequestBodyProperties.length)) return res.status(400).send({
+            if (!(Object.keys(requestBodyObject).length === selectedRequestBodyProperties.length)) return res.status(400).send({
                 message: "Invalid request body"
             })
 
@@ -82,7 +97,7 @@ class ReportsMiddleware {
             let requestBodyObject = req.body;
 
             // Check if the request body as more or less than expected properties
-            if(!(Object.keys(requestBodyObject).length === selectedRequestBodyProperties.length)) return res.status(400).send({
+            if (!(Object.keys(requestBodyObject).length === selectedRequestBodyProperties.length)) return res.status(400).send({
                 message: "Invalid request body"
             })
 

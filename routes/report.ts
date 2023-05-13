@@ -8,9 +8,12 @@ import jwtMiddleware from '../middleware/authentication/jwt';
 import permissionMiddleware from '../common/middleware/common.permission.middleware';
 import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
 import BodyValidationMiddleware from '../common/middleware/body.validation.middleware';
-import { body } from 'express-validator';
+import { body, check } from 'express-validator';
 
 import express from 'express';
+import { isValueRepeated, validateFields, validateIMEINumber } from '../common/helpers/utils';
+import report from '../middleware/report';
+import { ifValidator } from '../common/middleware/validators/ifValidator';
 
 export class ReportsRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -21,15 +24,30 @@ export class ReportsRoutes extends CommonRoutesConfig {
         this.app
             .route(`/reports`)
             .get(
-                jwtMiddleware.validJWTNeeded,
-                permissionMiddleware.permissionFlagRequired(PermissionFlag.VIEW_REPORTS),
+                // jwtMiddleware.validJWTNeeded,
+                // permissionMiddleware.permissionFlagRequired(PermissionFlag.VIEW_REPORTS),
                 ReportsController.listReports
             )
             .post(
-                body('phone.imei1').isNumeric(),
+                body('phone.imei1').isNumeric().custom(validateIMEINumber),
+                body('phone.imei2').isNumeric().custom(validateIMEINumber).optional(),
+                body('phone.imei3').isNumeric().custom(validateIMEINumber).optional(),
+                // body('phone.imei2').isNumeric().custom(validateIMEINumber).optional().if((value: string, {req}: {req: any})=> req.body.phone.imei3).notEmpty(),
+                // body('phone.imei3').isNumeric().custom(validateIMEINumber).optional().if((value: string, {req}: {req: any})=> req.body.phone.imei2).notEmpty(),
+                body('phone.storage').isInt().isLength({ min: 2, max: 4 }),
+                body('victim.firstname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
+                body('victim.middlename').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
+                body('victim.lastname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
+                body('incident.date').isString(),
+                body('incident.place').isString(),
+                body('incident.depossession').isString(),
+                body('incident.brief').isString(),
+                body('rb').isString().optional(),
+                BodyValidationMiddleware.notEmptyIfOtherFieldIsNotEmpty("phone.imei2", "phone.imei3"),
+                BodyValidationMiddleware.areAllImeiValuesUnique("phone.imei1", "phone.imei2", "phone.imei3"),
                 BodyValidationMiddleware.verifyBodyFieldsErrors,
-                jwtMiddleware.validJWTNeeded,
-                permissionMiddleware.permissionFlagRequired(PermissionFlag.CREATE_REPORT),
+                // jwtMiddleware.validJWTNeeded,
+                // permissionMiddleware.permissionFlagRequired(PermissionFlag.CREATE_REPORT),
                 ReportsController.createReport
             );
 
@@ -72,7 +90,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
             BodyValidationMiddleware.verifyBodyFieldsErrors,
             jwtMiddleware.validJWTNeeded,
             jwtMiddleware.extractCurrentUser,
-            MiscellaneousMiddleware.validateReportExists,
+            ReportsMiddleware.validateReportExists,
             UsersMiddleware.userCantChangeReportStatus,
             permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION), // it should be be edit report permissions
             ReportsController.put,
@@ -95,7 +113,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
             BodyValidationMiddleware.verifyBodyFieldsErrors,
             jwtMiddleware.validJWTNeeded,
             jwtMiddleware.extractCurrentUser,
-            MiscellaneousMiddleware.validateReportExists,
+            ReportsMiddleware.validateReportExists,
             UsersMiddleware.userCantChangeReportStatus,
             permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION),
             ReportsController.patch,
@@ -109,7 +127,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 jwtMiddleware.validJWTNeeded,
                 jwtMiddleware.extractCurrentUserId,
                 ReportsMiddleware.extractReportApprovalRequestBody(),
-                permissionMiddleware.permissionFlagRequired(PermissionFlag.APPROVE_REPORTS),
+                permissionMiddleware.permissionFlagRequired(PermissionFlag.ADMIN_PERMISSION),
                 ReportsController.approveReport
             )
 

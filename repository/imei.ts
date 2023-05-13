@@ -1,6 +1,6 @@
 import debug from 'debug';
 import { CreateImeiDto } from '../dto/imei/createImei';
-import { generateImeiId, isObjectEmpty, validateIMEINumber } from '../common/helpers/utils';
+import { generateImeiId, isObjectEmpty, paddedNumber, validateIMEINumber } from '../common/helpers/utils';
 import { PatchImeiDto } from '../dto/imei/patchImei';
 import { PutImeiDto } from '../dto/imei/putImei';
 import ImeiModel from '../model/imei';
@@ -26,7 +26,7 @@ class ImeiRepository {
 
     async addIMEI(imeiFields: CreateImeiDto) {
         try {
-            const IMEI = generateImeiId(imeiFields.tac, imeiFields.serial, imeiFields.checkDigit)
+            const IMEI = generateImeiId(imeiFields?.tac, imeiFields.serial, imeiFields.checkDigit)
             if (!IMEI) throw new Error(`Invalid IMEI`)
             const imei = new this.Imei({
                 number: IMEI,
@@ -81,9 +81,9 @@ class ImeiRepository {
             if (isObjectEmpty(imeiInfo)) throw new ResourceNotFoundError(`Could not find Imei device`, 404);
             const imei = new this.Imei({
                 number: imeiNumber,
-                tac: imeiInfo.tac,
-                serial: imeiInfo.serial,
-                checkDigit: imeiInfo.controlNumber,
+                tac: paddedNumber(imeiInfo.tac, 8),
+                serial: paddedNumber(imeiInfo.serial, 6),
+                checkDigit: paddedNumber(imeiInfo.controlNumber, 1),
                 valid: imeiInfo.valid,
                 deviceId: imeiInfo.device_id,
                 deviceImageUrl: imeiInfo.device_image,
@@ -140,8 +140,8 @@ class ImeiRepository {
 
         // let responseData: any;
         return new Promise<ImeiDBApiSuccessResponse>((resolve, reject) => {
-
-            const req = https.get(`https://imeidb.xyz/api/imei/${imeiNumber}?token=kZz6NQSZKRcNgkOLsuDj&format=json`,
+            let token = process.env.IMEI_DB_TOKEN as string;
+            const req = https.get(`https://imeidb.xyz/api/imei/${imeiNumber}?token=${token}&format=json`,
                 response => {
                     let data = "";
 

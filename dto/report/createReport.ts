@@ -1,33 +1,34 @@
 export interface CreateReportDto {
   phone: {
-    imei1: Number,
-    imei2?: Number,
-    imei3?: Number
-    name: String,
-    brand: String,
-    model: String,
-    manufacturer: String,
-    imageUrl: String
+    imei1: number,
+    imei2?: number,
+    imei3?: number
+    name: string,
+    brand: string,
+    model: string,
+    manufacturer: string,
+    imageUrl: string,
+    storage: number
   },
   incident: {
-    date: String,
-    place: String,
+    date: string,
+    place: string,
     depossession: Depossession,
-    brief: String
+    brief: string
   },
   flags: Flag,
-  rb: String,
-  verified: Boolean,
+  rb: string,
+  verified: boolean,
   victim: {
-    firstname: String,
-    middlename: String,
-    lastname: String,
+    firstname: string,
+    middlename: string,
+    lastname: string,
   }
 }
 
 enum Flag {
-  clear, 
-  warning, 
+  clear,
+  warning,
   caution,
 }
 enum Depossession {

@@ -38,7 +38,8 @@ class PhoneMiddleware {
                 location: 'params'
             }
         })
-        req.body.imei = parseInt(req.params.IMEI);
+        // req.body.imei = parseInt(req.params.IMEI);
+        req.body.imei = req.params.IMEI;
         next();
     }
 
