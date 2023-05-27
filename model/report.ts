@@ -5,26 +5,26 @@ import { ReportStatus } from "../types";
 const { Schema, model } = mongooseService.getMongoose();
 
 export interface ILostPhoneReport extends Document {
-    stolenPhoneId: string;
+    stolenPhoneId: string
     phone: {
-        imei1: number,
-        imei2?: number,
-        imei3?: number,
-        storage?: number
-    },
+        imeis:  {
+            imei: string
+        }[],
+        // storage?: number
+    };
     incident: {
-        date: string,
-        place: string,
-        depossession: string,
+        date: string
+        place: string
+        depossession: string
         brief: string
-    },
-    flags: string,
-    rb?: string,
-    verified: boolean,
+    };
+    flags: string
+    rb?: string
+    verified: boolean
     victim: {
-        firstname: string,
-        middlename: string,
-        lastname: string,
+        firstname: string
+        middlename: string
+        lastname: string
         username?: string
     }
     originalReportId?: string
@@ -39,48 +39,11 @@ const LostPhoneReportSchema = new Schema<ILostPhoneReport>({
         ref: 'stolenPhone',
         required: true
     },
-    // phone: {
-    //     imei1: {
-    //         type: Number,
-    //         maxlength: 15,
-    //         required: true
-    //     },
-    //     imei2: {
-    //         type: Number,
-    //         maxlength: 15,
-    //         required: false
-    //     },
-    //     imei3: {
-    //         type: Number,
-    //         maxlength: 15,
-    //         required: false
-    //     },
-    //     storage: {
-    //         type: Number,
-    //         maxlength: 4,
-    //         required: false
-    //     }
-    // },
-    // imeis:{
-    //     type: [phoneImeiSchema],
-    //     required: true
-    //     // default: []
-    // },
     phone: {
-        imei1: {
-            type: Number,
-            maxlength: 15,
-            required: true
-        },
-        imei2: {
-            type: Number,
-            maxlength: 15,
-            required: false
-        },
-        imei3: {
-            type: Number,
-            maxlength: 15,
-            required: false
+        imeis: {
+            type: [phoneImeiSchema],
+            required: true,
+            // default: []
         },
         storage: {
             type: Number,
@@ -141,7 +104,8 @@ const LostPhoneReportSchema = new Schema<ILostPhoneReport>({
     originalReportId: {
         type: Schema.Types.ObjectId,
         ref: 'report',
-        required: false
+        required: false,
+        restrict: true
     },
     status: {
         type: String,

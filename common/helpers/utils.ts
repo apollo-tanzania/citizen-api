@@ -302,9 +302,14 @@ export function getObjectValue(object: any, keyString: string) {
  * @param arr 
  * @returns 
  */
-export function isArrayContainsUniqueValues(arr: any) {
-    const set = new Set(arr)
-    return set.size === arr.length
+export function isArrayContainsUniqueValues(arr: string[]) {
+    try {
+        const set = new Set(arr)
+        return set.size === arr.length 
+    } catch (error) {
+        throw error
+    }
+
 }
 
 export function paddedNumber(value: number, expectedNumberLength: number) {

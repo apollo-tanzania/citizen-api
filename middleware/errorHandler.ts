@@ -7,6 +7,7 @@ import { CustomError } from '../errors/CustomError';
 import { Error } from 'mongoose';
 import { ConflictError } from '../errors/ConflictError';
 import { UnprocessableEntityError } from '../errors/UnprocessableEntityError';
+import mongooseService from '../common/services/mongoose.service';
 
 function errorHandler(
     error: Error,
@@ -76,6 +77,11 @@ function errorHandler(
             return buildApiResponse(response, 400, false)
         }
     
+        if (error instanceof mongooseService.getMongoose().Error) {
+            response.locals.error = error
+            return buildApiResponse(response, 500, false)
+        }
+
         response.locals.error = error;
         buildApiResponse(response, 500, false, "Error")
 

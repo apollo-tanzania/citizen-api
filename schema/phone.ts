@@ -6,7 +6,7 @@ const { Schema } = mongooseService.getMongoose();
 
 interface IPhone extends Property {
     model: string;
-    imei: string;
+    imeis: string[];
 }
 
 export const phoneSchema = new Schema<IPhone>({

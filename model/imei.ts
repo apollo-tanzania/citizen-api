@@ -155,7 +155,7 @@ const ImeiSchema = new Schema<IImei>({
     type: {
         type: String,
         enum: ["primary", "secondary"],
-        default: null
+        default: "primary"
     },
     frequency: {
         type: [String],

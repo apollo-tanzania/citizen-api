@@ -29,5 +29,12 @@ export const strings = Object.freeze({
     SIM_SLOTS: 'simSlots',
     ERROR_MESSAGES: {
         DUPLICATE_REPORT: 'The information in this phone report matches a report that has already been submitted. We consider this to be a duplicate report'
+    },
+    // MONGO DB PATHS
+    MONGO_DB_PATHS: {
+        REPORT: {
+            INCIDENT_DATE_PATH: 'phone.incident',
+            PHONE_IMEI_PATH: 'phone.imei'
+        }
     }
 })

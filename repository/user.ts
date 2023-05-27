@@ -18,15 +18,20 @@ class StationRepository {
     }
 
     async addUser(userFields: CreateUserDto) {
-        const userId = shortid.generate();
-        const user = new this.User({
-            _id: userId,
-            ...userFields,
-            // permissionFlags: PermissionFlag.FREE_PERMISSION,
-            permissionFlags: userFields.permissionFlags
-        });
-        await user.save();
-        return userId;
+        try {
+            const userId = shortid.generate();
+            const user = new this.User({
+                _id: userId,
+                ...userFields,
+                // permissionFlags: PermissionFlag.FREE_PERMISSION,
+                permissionFlags: userFields.permissionFlags
+            });
+            await user.save();
+            return userId;
+        } catch (error) {
+            throw error
+        }
+
     }
 
     async getUserByEmail(email: string) {

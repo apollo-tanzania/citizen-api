@@ -1,7 +1,7 @@
 import express from 'express';
 import { validationResult } from 'express-validator';
 import buildApiResponse from '../api/buildApiResponse';
-import { getObjectValue, isArrayContainsUniqueValues } from '../helpers/utils';
+import { getObjectValue, isArrayContainsUniqueValues, validateIMEINumber } from '../helpers/utils';
 
 class BodyValidationMiddleware {
 
@@ -71,28 +71,46 @@ class BodyValidationMiddleware {
      * @param field3 
      * @returns 
      */
-    areAllImeiValuesUnique(field1: string, field2: string, field3: string) {
+    areAllImeiValuesUnique(fieldName: string) {
         return function (
             req: express.Request,
             res: express.Response,
             next: express.NextFunction
         ) {
 
+            try {
+                let imeis: string[] = [];
+                let fieldValue = getObjectValue(req.body, fieldName);
+                if (typeof fieldValue === 'string') {
+                    let isValid = validateIMEINumber(String(fieldValue))
+                    if (!isValid) {
+                        const errors = []
 
-            const field1Value = getObjectValue(req.body, field1);
-            const field2Value = getObjectValue(req.body, field2);
-            const field3Value = getObjectValue(req.body, field3);
+                        errors.push({
+                            value: `${fieldValue}`,
+                            msg: `Invalid IMEI`,
+                            param: fieldName,
+                            location: "body"
+                        })
 
-            if (field1Value && field2Value) {
-                let imeis = [];
-                imeis.push(field1Value, field2Value);
-                if (!isArrayContainsUniqueValues(imeis)) {
+                        const validationErros = errors.map(error => ({ value: error.value, field: error.param, message: error.msg, location: error.location }))
+                        res.locals.error = { errors: validationErros }
+                        return buildApiResponse(res, 400, false);
+                    }
+                    imeis.push(fieldValue)
+                    req.body.phone.imei = imeis;
+                    // console.log("SINGLE VALUE ", imeis)
+                } else if (isArrayContainsUniqueValues(fieldValue)) {
+                    imeis = fieldValue
+                    req.body.phone.imei = imeis
+                    // console.log("ARRAY OF STRINGS ", imeis)
+                } else {
                     const errors = []
 
                     errors.push({
-                        value: "",
-                        msg: `${field2} must not be equal to ${field1} `,
-                        param: field2,
+                        value: ``,
+                        msg: `Invalid IMEI`,
+                        param: req.body.phone.imei,
                         location: "body"
                     })
 
@@ -101,18 +119,36 @@ class BodyValidationMiddleware {
                     return buildApiResponse(res, 400, false);
                 }
 
-            }
+                // Validate the values
+                for (let imei of imeis) {
+                    try {
+                        if (!validateIMEINumber(imei)) {
+                            const errors = []
 
-            if (field1Value && field2Value && field3Value) {
-                let imeis = [];
-                imeis.push(field1Value, field2Value, field3Value);
+                            errors.push({
+                                value: ``,
+                                msg: `Invalid IMEI`,
+                                param: req.body.phone.imei,
+                                location: "body"
+                            })
+
+                            const validationErros = errors.map(error => ({ value: error.value, field: error.param, message: error.msg, location: error.location }))
+                            res.locals.error = { errors: validationErros }
+                            return buildApiResponse(res, 400, false);
+                        }
+
+                    } catch (error) {
+                        throw next(error)
+                    }
+                }
+
                 if (!isArrayContainsUniqueValues(imeis)) {
                     const errors = []
 
                     errors.push({
                         value: "",
-                        msg: `${field3} must not be equal to ${field1} or ${field2} `,
-                        param: field3,
+                        msg: `IMEIs must be unique`,
+                        param: req.body.phone.imei,
                         location: "body"
                     })
 
@@ -120,8 +156,12 @@ class BodyValidationMiddleware {
                     res.locals.error = { errors: validationErros }
                     return buildApiResponse(res, 400, false);
                 }
+                next()
+
+            } catch (error) {
+                next(error)
             }
-            next()
+
         }
     }
 

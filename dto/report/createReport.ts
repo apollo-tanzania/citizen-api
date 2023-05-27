@@ -1,8 +1,13 @@
 export interface CreateReportDto {
   phone: {
-    imei1: number,
-    imei2?: number,
-    imei3?: number
+    // imei1: number,
+    // imei2?: number,
+    // imei3?: number
+    // imei:{
+    //   number: string,
+    // }[],
+    imei: string[],
+    //  object[],
     name: string,
     brand: string,
     model: string,
