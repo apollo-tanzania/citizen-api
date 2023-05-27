@@ -35,6 +35,9 @@ const debugLog: debug.IDebugger = debug('app');
 
 app.use(express.json());
 app.use(cors());
+app.use(cors({
+    origin: "*"
+}))
 app.use(helmet());
 
 expressJSDocSwagger(app)(options);
@@ -70,10 +73,6 @@ routes.push(new ImeiRoutes(app));
 routes.push(new PermissionRoutes(app));
 
 app.use(errorHandler)
-
-
-
-
 
 const runningMessage = `Server running at http://localhost:${port}`;
 app.get('/', (req: express.Request, res: express.Response) => {

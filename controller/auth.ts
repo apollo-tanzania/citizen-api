@@ -2,12 +2,15 @@ import express from 'express';
 import debug from 'debug';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import userService from '../service/user';
 
 const log: debug.IDebugger = debug('app:auth-controller');
 
 // @ts-expect-error
 const jwtSecret: string = process.env.JWT_SECRET;
-const tokenExpirationInSeconds = 36000;
+// const tokenExpirationInSeconds = 36000;
+const tokenExpirationInSeconds = '60s';
+
 
 class AuthController {
     async createJWT(req: express.Request, res: express.Response) {
@@ -25,6 +28,28 @@ class AuthController {
             return res
                 .status(201)
                 .send({ accessToken: token, refreshToken: hash });
+        } catch (err) {
+            log('createJWT error: %O', err);
+            return res.status(500).send();
+        }
+    }
+
+    async getAuthenticatedUser(req: express.Request, res: express.Response) {
+        try {
+            const user = await userService.readById(res.locals.jwt.userId)
+            const { firstName, middleName, lastName, enabled } = user
+            return res
+                .status(200)
+                .send({
+                    userId: res.locals.jwt.userId,
+                    email: res.locals.jwt.email,
+                    displayName: `${firstName} ${lastName}`,
+                    firstName,
+                    middleName,
+                    lastName,
+                    role: res.locals.jwt.role,
+                    userEnabled: enabled
+                });
         } catch (err) {
             log('createJWT error: %O', err);
             return res.status(500).send();

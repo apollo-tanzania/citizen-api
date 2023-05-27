@@ -1,3 +1,4 @@
+import express from 'express';
 import { CommonRoutesConfig } from '../common/common.routes.config';
 import ReportsController from '../controller/report';
 import ReportVerificationLogController from '../controller/reportVerificationLog';
@@ -10,10 +11,6 @@ import { PermissionFlag } from '../common/middleware/common.permissionflag.enum'
 import BodyValidationMiddleware from '../common/middleware/body.validation.middleware';
 import { body, check } from 'express-validator';
 
-import express from 'express';
-import { isValueRepeated, validateFields, validateIMEINumber } from '../common/helpers/utils';
-import report from '../middleware/report';
-import { ifValidator } from '../common/middleware/validators/ifValidator';
 
 export class ReportsRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -29,11 +26,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 ReportsController.listReports
             )
             .post(
-                body('phone.imei1').isNumeric().custom(validateIMEINumber),
-                body('phone.imei2').isNumeric().custom(validateIMEINumber).optional(),
-                body('phone.imei3').isNumeric().custom(validateIMEINumber).optional(),
-                // body('phone.imei2').isNumeric().custom(validateIMEINumber).optional().if((value: string, {req}: {req: any})=> req.body.phone.imei3).notEmpty(),
-                // body('phone.imei3').isNumeric().custom(validateIMEINumber).optional().if((value: string, {req}: {req: any})=> req.body.phone.imei2).notEmpty(),
+                body("phone.imei"),
                 body('phone.storage').isInt().isLength({ min: 2, max: 4 }),
                 body('victim.firstname').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
                 body('victim.middlename').isString().isLength({ min: 2 }).withMessage("Must include 2 or more characters"),
@@ -43,8 +36,7 @@ export class ReportsRoutes extends CommonRoutesConfig {
                 body('incident.depossession').isString(),
                 body('incident.brief').isString(),
                 body('rb').isString().optional(),
-                BodyValidationMiddleware.notEmptyIfOtherFieldIsNotEmpty("phone.imei2", "phone.imei3"),
-                BodyValidationMiddleware.areAllImeiValuesUnique("phone.imei1", "phone.imei2", "phone.imei3"),
+                BodyValidationMiddleware.areAllImeiValuesUnique("phone.imei"),
                 BodyValidationMiddleware.verifyBodyFieldsErrors,
                 // jwtMiddleware.validJWTNeeded,
                 // permissionMiddleware.permissionFlagRequired(PermissionFlag.CREATE_REPORT),

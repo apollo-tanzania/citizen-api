@@ -13,6 +13,7 @@ import { ResourceNotFoundError } from '../errors/ResourceNotFoundError';
 import { InternalServerError } from '../errors/InternalServerError';
 import { ImeiDBApiSuccessResponse } from '../types';
 import { Types } from 'mongoose';
+import { UnprocessableEntityError } from '../errors/UnprocessableEntityError';
 
 const log: debug.IDebugger = debug('app:imei-dao');
 
@@ -59,18 +60,17 @@ class ImeiRepository {
 
     async search(imeiNumber: string) {
         try {
+            const isValid = validateIMEINumber(imeiNumber);
 
-            const isValid = validateIMEINumber(imeiNumber.toString());
 
-
-            if (!isValid) throw new Error(`Invalid IMEI`);
+            if (!isValid) throw new UnprocessableEntityError(`${imeiNumber} is not a valid IMEI`);
 
             const device = await this.Imei.findOne({ number: imeiNumber }).exec();
 
             if (device) return device;
 
             // Fetch the device information from remote/ Third Party API
-            const imeiDbReponse = await this.remoteIMEIRequest(imeiNumber.toString())
+            const imeiDbReponse = await this.remoteIMEIRequest(imeiNumber)
 
             // Local mocking remote database
             // const imeiDbReponse = this.findIMEI("352933100520744")

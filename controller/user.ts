@@ -8,6 +8,7 @@ import { PatchUserDto } from '../dto/patchUser';
 import apiResponse from '../common/api/buildApiResponse';
 import { PatchPermissionLog } from '../dto/permissionLog/patchPermissionLog';
 import extractParamsFromQuery from '../common/helpers/utils';
+import buildApiResponse from '../common/api/buildApiResponse';
 
 const log: debug.IDebugger = debug('app:users-controller');
 
@@ -32,10 +33,18 @@ class UsersController {
         res.status(200).send(user);
     }
 
-    async createUser(req: express.Request, res: express.Response) {
-        req.body.password = await argon2.hash(req.body.password);
-        const userId = await usersService.create(req.body);
-        res.status(201).send({ id: userId });
+    async createUser(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            req.body.password = await argon2.hash(req.body.password);
+            const userId = await usersService.create(req.body);
+            res.locals.data = {
+                userId
+            }
+            buildApiResponse(res, 201, true)
+            // res.status(201).send({ id: userId });
+        } catch (error) {
+            next(error);
+        }
     }
 
     async patch(req: express.Request, res: express.Response) {
@@ -172,47 +181,42 @@ class UsersController {
         res.status(204).send();
     }
 
-    async updateAdminPermissionFlags(req: express.Request, res: express.Response) {
+    async updateAdminPermissionFlags(req: express.Request, res: express.Response, next: express.NextFunction) {
 
-        const permissionChangeDto = {
-            userId: req.params.adminId,
-            permissionFlags: parseInt(req.params.permissionFlags),
-            authorizedBy: req.body.authorizedBy
-        }
-
-        const results = await adminsService.updatePermissionById(req.body.id, permissionChangeDto);
-
-        if (results instanceof Error) {
-
+        try {
+            const permissionChangeDto = {
+                userId: req.params.adminId,
+                permissionFlags: parseInt(req.params.permissionFlags),
+                authorizedBy: req.body.authorizedBy
+            }
+    
+            const results = await adminsService.updatePermissionById(req.body.id, permissionChangeDto);
+    
             res.locals.data = {
+                message: "Admin permissions updated successfully",
                 ...results
             }
-
-            return apiResponse(res, 400)
+            buildApiResponse(res, 201, true)
+        } catch (error) {
+            next(error)
         }
-        // res.status(204).send();
-        res.locals.data = {
-            message: "Admin permissions updated successfully",
-            ...results
-        }
-        return apiResponse(res, 201)
+       
 
         // return res.status(204).send(results);
     }
 
-    async updateLawEnforcementPermissionFlags(req: express.Request, res: express.Response) {
-        const patchLawEnforcementDto: PatchUserDto = {
-            permissionFlags: parseInt(req.params.permissionFlags),
-        };
-        const results = await lawEnforcementService.patchById(req.body.id, patchLawEnforcementDto);
-
-        if (results instanceof Error) {
-            res.locals.data = {
-                ...results
-            }
-            return apiResponse(res, 400)
+    async updateLawEnforcementPermissionFlags(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const patchLawEnforcementDto: PatchUserDto = {
+                permissionFlags: parseInt(req.params.permissionFlags),
+            };
+            const results = await lawEnforcementService.patchById(req.body.id, patchLawEnforcementDto);
+    
+            buildApiResponse(res, 204)
+        } catch (error) {
+            next(error);
         }
-        res.status(204).send();
+      
     }
 
     // async updateLawEnforcementVerificationStatusFlag(req: express.Request, res: express.Response) {
@@ -230,60 +234,31 @@ class UsersController {
     //     res.status(204).send();
     // }
 
-    async updateLawEnforcementVerificationStatus(req: express.Request, res: express.Response) {
-        const response = await lawEnforcementService.updateLawEnforcementVerificationStatus(req.body);
-
-        if (response?.errors) {
+    async updateLawEnforcementVerificationStatus(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const response = await lawEnforcementService.updateLawEnforcementVerificationStatus(req.body);
             res.locals.data = {
-                message: "Create history Failed.",
+                message: "Verification history created",
                 data: response
             }
-
-            return apiResponse(res, 400);
+            buildApiResponse(res, 201, true)
+        } catch (error) {
+            next(error)
         }
-
-        if (response?.type === "Conflict") {
-            res.locals.data = {
-                message: "Law enforcement officer already verified.",
-            }
-
-            return apiResponse(res, 409);
-        }
-
-
-        res.locals.data = {
-            message: "Verification history created",
-            data: response
-        }
-        apiResponse(res, 201)
     }
 
-    async revokeLawEnforcementVerificationStatus(req: express.Request, res: express.Response) {
-        const response = await lawEnforcementService.revokeLawEnforcementVerificationStatus(req.body);
+    async revokeLawEnforcementVerificationStatus(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const response = await lawEnforcementService.revokeLawEnforcementVerificationStatus(req.body);
 
-        if (response?.errors) {
             res.locals.data = {
-                message: "Create un-verificaton history Failed.",
+                message: "Law enforcement verification revoked",
                 data: response
             }
-
-            return apiResponse(res, 400);
+            buildApiResponse(res, 201, true)
+        } catch (error) {
+            next(error)
         }
-
-        if (response?.type === "Conflict") {
-            res.locals.data = {
-                message: response.message,
-            }
-
-            return apiResponse(res, 409);
-        }
-
-
-        res.locals.data = {
-            message: "Law enforcement verification revoked",
-            data: response
-        }
-        apiResponse(res, 201)
     }
 }
 

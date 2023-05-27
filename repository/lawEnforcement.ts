@@ -14,6 +14,7 @@ import LawEnforcementVerificationHistoryModel from '../model/lawEnforcementVerif
 import { CreateLawEnforcementVerificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementVerificationHistory';
 import { CreateLawEnforcementUnverificationHistoryDto } from '../dto/lawEnforcementVerificationHistory/createLawEnforcementUnverificationHistory';
 import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
+import { ConflictError } from '../errors/ConflictError';
 
 
 const log: debug.IDebugger = debug('app:lawEnforcements-dao');
@@ -120,7 +121,7 @@ class LawEnforcementRepository {
 
             return existingLawEnforcementId;
         } catch (error) {
-            return error
+            throw error
         }
     }
 
@@ -134,12 +135,7 @@ class LawEnforcementRepository {
             const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.lawEnforcementId });
 
             // return officerToBeVerified;
-            if (officerToBeVerified?.isVerified) {
-                return {
-                    message: "Officer already verified",
-                    type: "Conflict"
-                }
-            }
+            if (officerToBeVerified?.isVerified) throw new ConflictError("Officer already verified"); 
 
             // update status to verified
             await this.LawEnforcement.findOneAndUpdate(
@@ -152,7 +148,7 @@ class LawEnforcementRepository {
                 { new: true }
             ).exec();
 
-            const lawEnforcementOfficerVerificationHistory = await new this.LawEnforcementVerificationHistory({
+            const lawEnforcementOfficerVerificationHistory =  new this.LawEnforcementVerificationHistory({
                 ...lawEnforcementOfficerVerificationHistoryFields
             })
 
@@ -165,9 +161,7 @@ class LawEnforcementRepository {
         } catch (error) {
             // Rollback the transaction i.e rollback any changes made to the database
             await session.abortTransaction();
-            // throw error;
-            return error;
-
+            throw error;
         } finally {
             // Ending sesion
             session.endSession()
@@ -185,12 +179,7 @@ class LawEnforcementRepository {
             const officerToBeVerified = await this.LawEnforcement.findOne({ username: lawEnforcementOfficerVerificationHistoryFields.lawEnforcementId });
 
             // return officerToBeVerified;
-            if (!officerToBeVerified?.isVerified) {
-                return {
-                    message: "Officer not verified yet",
-                    type: "Conflict"
-                }
-            }
+            if (!officerToBeVerified?.isVerified) throw new ConflictError("Officer not verified yet");
 
             // update status to false i.e unverified
             await this.LawEnforcement.findOneAndUpdate(
@@ -218,9 +207,7 @@ class LawEnforcementRepository {
         } catch (error) {
             // Rollback the transaction i.e rollback any changes made to the database
             await session.abortTransaction();
-            // throw error;
-            return error;
-
+            throw error;
         } finally {
             // Ending sesion
             session.endSession()
