@@ -76,9 +76,9 @@ class LawEnforcementVerificationHistoryRepository {
     async getLawEnforcementVerificationHistoryByEmail(email: string) {
 
         try {
-            const user = await this.User.findOne({ username: email }).exec()
+            const user = await this.User.findOne({ email: email }).exec()
 
-            return this.LawEnforcementVerificationHistory.findOne({ username: user?.username }).exec();
+            return this.LawEnforcementVerificationHistory.findOne({ username: user?.email }).exec();
 
         } catch (error) {
             throw error;

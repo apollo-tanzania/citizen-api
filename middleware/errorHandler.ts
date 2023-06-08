@@ -66,10 +66,10 @@ function errorHandler(
             return buildApiResponse(response, 404, false)
         }
     
-        if (error instanceof Error.DisconnectedError) {
-            response.locals.error = error
-            return buildApiResponse(response, 500, false)
-        }
+        // if (error instanceof Error.DisconnectedError) {
+        //     response.locals.error = error
+        //     return buildApiResponse(response, 500, false)
+        // }
     
         // Checks request body syntax errors
         if (error instanceof SyntaxError && 'statusCode' in error && 'body' in error) {

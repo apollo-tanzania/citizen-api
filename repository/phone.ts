@@ -221,7 +221,7 @@ class PhoneRepository {
     private async getVerifiedReportsCount(stolenPhoneId: string) {
         const queryResult = await this.StolenPhone.aggregate([
             // Watch by id
-            { $match: { _id: Types.ObjectId(stolenPhoneId) } },
+            { $match: { _id: new Types.ObjectId(stolenPhoneId) } },
             { $unwind: '$reports' },
             { $match: { 'reports.verified': true } },
             { $group: { _id: '$_id', verifiedReportsCount: { $sum: 1 } } }

@@ -14,6 +14,7 @@ import LostPhoneReportModel from "../../model/report";
 import ReportVerifcaitonLogModel from "../../model/reportVerificationLog";
 import { AnyArray } from "mongoose";
 import ImeiModel from "../../model/imei";
+import { log } from "winston";
 // initialize models variables
 const Station = StationModel;
 const User = UserModel;
@@ -303,21 +304,21 @@ const dataSeeder = async () => {
 
     // return
 
+    Imei.countDocuments()
+        .then(count => {
+            if (count === 0) {
+                Imei.insertMany(imeiList)
+                    .then((docs: any) => console.log(`${docs}Imeis are saved successfully`))
+                    .catch((err: any) => console.error(err))
+            }
+        })
+        .catch((err: Error) => {
+            throw err
+        })
 
-    //   console.log(await PermissionLogModel.find())
-    // console.log(await ReportVerifcaitonLogModel.find())
-
-    Imei.countDocuments((err: Error, count: number) => {
-        if (!err && count === 0) {
-            Imei.insertMany(imeiList)
-                .then((docs: any) => console.log(`${docs}Imeis are saved successfully`))
-                .catch((err: any) => console.error(err))
-        }
-    })
-
-
-    Station.countDocuments((err: Error, count: number) => {
-        if (!err && count === 0) {
+    Station.countDocuments()
+    .then(count => {
+        if ( count === 0) {
             new Station({
                 _id: "RB-TBT",
                 name: "Tabata",
@@ -357,15 +358,18 @@ const dataSeeder = async () => {
 
         }
     })
+    .catch((err: Error) => {
+        throw err;
+    })
 
-
-    Permission.countDocuments(async (err: Error, count: number) => {
+    Permission.countDocuments()
+    .then(async count => {
         const { startSession } = mongooseService.getMongoose()
         const session = await startSession();
 
         session.startTransaction();
         try {
-            if (!err && count === 0) {
+            if (count === 0) {
 
                 let permissionsList = []
 
@@ -374,7 +378,7 @@ const dataSeeder = async () => {
                         if (!parseInt(key)) {
                             permissionsList.push({
                                 name: key,
-                                genericName: key?.replaceAll("_", " "),
+                                genericName: key.replace(/_/g, " "),
                                 flag: Long.fromNumber(PermissionFlag[key] as unknown as number),
                             })
                         }
@@ -403,14 +407,18 @@ const dataSeeder = async () => {
             session.endSession()
         }
     })
+    .catch((err: Error) => {
+        throw err
+    })
 
-    User.countDocuments(async (err: Error, count: number) => {
+    User.countDocuments()
+    .then(async count => {
         const { startSession } = mongooseService.getMongoose()
         const session = await startSession();
 
         session.startTransaction();
         try {
-            if (!err && count === 0) {
+            if (count === 0) {
                 const hashedPassword = await argon2.hash("admin");
 
                 await new User({
@@ -444,7 +452,9 @@ const dataSeeder = async () => {
         } finally {
             session.endSession()
         }
-
+    })
+    .catch((err: Error)=> {
+        throw err;
     })
 
 }

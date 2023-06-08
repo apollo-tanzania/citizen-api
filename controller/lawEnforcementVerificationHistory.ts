@@ -50,22 +50,22 @@ class LawEnforcementVerificationHistoryController {
     async createReportLawEnforcementVerificationHistory(req: express.Request, res: express.Response) {
         const response = await lawEnforcementVerificationHistoryService.create(req.body);
 
-        if (response?.errors) {
-            res.locals.data = {
-                message: "Create history Failed.",
-                data: response
-            }
+        // if (response?.errors) {
+        //     res.locals.data = {
+        //         message: "Create history Failed.",
+        //         data: response
+        //     }
 
-            return apiResponse(res, 400);
-        }
+        //     return apiResponse(res, 400);
+        // }
 
-        if (response?.type === "Conflict") {
-            res.locals.data = {
-                message: "Law enforcement officer already verified.",
-            }
+        // if (response?.type === "Conflict") {
+        //     res.locals.data = {
+        //         message: "Law enforcement officer already verified.",
+        //     }
 
-            return apiResponse(res, 409);
-        }
+        //     return apiResponse(res, 409);
+        // }
 
      
         res.locals.data = {

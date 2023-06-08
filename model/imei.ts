@@ -3,9 +3,10 @@ import mongooseService from "../common/services/mongoose.service";
 const { Schema, model } = mongooseService.getMongoose();
 
 export interface IImei extends Document {
-    tac: number;
-    serial: number;
-    checkDigit: number;
+    number: string;
+    tac: number | string;
+    serial: number | string;
+    checkDigit: number | string;
     valid: boolean | null,
     deviceId: number | null;
     deviceImageUrl: string | null;
@@ -25,6 +26,7 @@ export interface IImei extends Document {
     brand: string;
     // to avoid conflict with existing properties for mongoose, model and modelName properties
     _model: string;
+    type?: string;
     models: string[];
     manufacturer: string;
     deviceType: string;

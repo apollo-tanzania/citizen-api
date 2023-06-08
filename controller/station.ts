@@ -26,10 +26,12 @@ class StationsController {
 
     async createStation(req: express.Request, res: express.Response) {
         const stationResponse = await stationsService.create(req.body);
-        if (!stationResponse.ok) {
-            return res.status(201).send({ stationResponse });
-        }
-        return res.status(400).send({ stationResponse });
+        return res.status(201).send({ stationResponse });
+
+        // if (!stationResponse?.ok) {
+        //     return res.status(201).send({ stationResponse });
+        // }
+        // return res.status(400).send({ stationResponse });
     }
 
     async patch(req: express.Request, res: express.Response) {

@@ -37,7 +37,8 @@ class AuthController {
     async getAuthenticatedUser(req: express.Request, res: express.Response) {
         try {
             const user = await userService.readById(res.locals.jwt.userId)
-            const { firstName, middleName, lastName, enabled } = user
+            if(!user) throw new Error("User not found")
+            const { firstName, middleName, lastName, role, enabled } = user 
             return res
                 .status(200)
                 .send({
@@ -47,7 +48,7 @@ class AuthController {
                     firstName,
                     middleName,
                     lastName,
-                    role: res.locals.jwt.role,
+                    role: role,
                     userEnabled: enabled
                 });
         } catch (err) {

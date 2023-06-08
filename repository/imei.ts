@@ -43,12 +43,12 @@ class ImeiRepository {
     }
 
     async removeIMEIById(imeiId: string) {
-        return this.Imei.deleteOne({ _id: Types.ObjectId(imeiId) }).exec();
+        return this.Imei.deleteOne({ _id: new Types.ObjectId(imeiId) }).exec();
     }
 
     async getIMEIById(imeiId: string) {
         try {
-            return this.Imei.findOne({ _id: Types.ObjectId(imeiId) }).exec();
+            return this.Imei.findOne({ _id: new Types.ObjectId(imeiId) }).exec();
         } catch (error) {
             throw error;
         }

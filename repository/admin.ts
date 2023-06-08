@@ -137,6 +137,7 @@ class AdminRepository {
             ).exec();
 
             let newPermissionFlagLong = Long.fromNumber(permissionLogFields?.permissionFlags as unknown as number)
+            if(!existingAdmin) throw new Error("Not found")
             let previousPermissionFlagLong = Long.fromNumber(existingAdmin?.permissionFlags)
 
             let permissionGrantedOrRevokedLong = newPermissionFlagLong.sub(previousPermissionFlagLong) // Convert to Long
@@ -154,7 +155,7 @@ class AdminRepository {
                 ...permissionLogFields,
                 action: permissionGrantedOrRevoked > 0 ? "granted" : "revoked",
                 previousPermissionFlag: existingAdmin?.permissionFlags,
-                permission: permission._id
+                permission: permission?._id
             })
 
             const log : any = await permissionLog.save();

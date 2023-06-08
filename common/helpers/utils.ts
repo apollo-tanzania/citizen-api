@@ -89,7 +89,7 @@ export default function extractParamsFromQuery(query: Record<string, any>) {
  * @param id 
  * @returns 
  */
-export function createMongooseObjectIDInstance(id?: string | number | Types._ObjectId | undefined) {
+export function createMongooseObjectIDInstance(id?: string | number | Types.ObjectId | undefined) {
     try {
         const objectIdInstance = new Types.ObjectId(id)
         return objectIdInstance ? objectIdInstance : null
