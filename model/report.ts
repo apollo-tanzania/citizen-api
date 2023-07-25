@@ -1,11 +1,11 @@
-import { Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 import mongooseService from "../common/services/mongoose.service";
 import { phoneImeiSchema } from "../schema/imei";
 import { ReportStatus } from "../types";
-const { Schema, model } = mongooseService.getMongoose();
+const {  model } = mongooseService.getMongoose();
 
 export interface ILostPhoneReport extends Document {
-    stolenPhoneId: string
+    stolenPhoneId: Schema.Types.ObjectId,
     phone: {
         imeis:  {
             imei: string

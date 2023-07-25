@@ -6,7 +6,7 @@ import { Model, Document } from "mongoose";
  * @param documentId 
  * @returns 
  */
-async function queryById<T extends Document>(
+async function queryById<T extends any>(
     Model: Model<T>,
     documentId: string
 ) {

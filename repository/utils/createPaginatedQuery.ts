@@ -1,4 +1,4 @@
-import { Model, Document, FilterQuery } from "mongoose";
+import { Model, Document, FilterQuery, Mongoose } from "mongoose";
 
 export interface QueryParams {
     page?: number;
@@ -13,8 +13,10 @@ export interface QueryParams {
  * @param queryParams 
  * @returns 
  */
-async function queryWithPagination<T extends Document>(
-    Model: Model<T>,
+// type Entry = mongoose.Model<Foo & Document>;
+
+async function queryWithPagination<T extends any>(
+    model: Model<T> ,
     queryParams: QueryParams,
     populate?: any
 ) {
@@ -22,7 +24,7 @@ async function queryWithPagination<T extends Document>(
     try {
         const { page, limit, filter = {}, sort = {"_id": -1} } = queryParams;
 
-        const query = Model.find(filter)
+        const query = model.find(filter)
             .sort(sort)
             .skip(Number(limit) * (Number(page) - 1))
             .limit(Number(limit))
@@ -32,7 +34,7 @@ async function queryWithPagination<T extends Document>(
         }
         const data = await query.exec()
 
-        const count = await Model.countDocuments(filter)
+        const count = await model.countDocuments(filter)
 
         return {
             data,

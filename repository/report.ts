@@ -117,7 +117,7 @@ class ReportRepository {
                                     let checkDigit = slotImeiFoundDoc.checkDigit
 
                                     // Concatenate imei building blocks
-                                    let imei = generateImei(tac, serial, checkDigit)
+                                    let imei = generateImei(tac as number, serial as number, checkDigit as number)
                                     // End of IMEI string construction
                                     if (!imei) throw new UnprocessableEntityError("IMEI not generated") // If failed throw exception
 
@@ -222,7 +222,7 @@ class ReportRepository {
                                     { imeis: [...existingStolenPhone.imeis, ...newImeisDoc] }
                                 )
 
-                                if (!imeiUpdateQ.ok) throw new UnprocessableEntityError("Could not update one of the new IMEI")
+                                if (!imeiUpdateQ.acknowledged) throw new UnprocessableEntityError("Could not update one of the new IMEI")
                                 // Update the number of times the phone is reported stolen
                                 let reportCountIncrementQ = await this.StolenPhone.findOneAndUpdate(
                                     { _id: existingStolenPhone._id },
@@ -314,7 +314,7 @@ class ReportRepository {
                             let checkDigit = slotImeiFoundDoc.checkDigit
 
                             // Concatenate imei building blocks
-                            let imei = generateImei(tac, serial, checkDigit)
+                            let imei = generateImei(tac as number, serial as number, checkDigit as number)
                             // End of IMEI string construction
                             if (!imei) throw new UnprocessableEntityError("Failed to generate IMEI") // If failed throw exception
 

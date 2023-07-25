@@ -56,7 +56,7 @@ class CustomMongooseORMQuery {
      * @param documentId 
      * @returns 
      */
-    async findById<T extends Document>(
+    async findById<T extends any>(
         Model: Model<T>,
         documentId: string
     ) {

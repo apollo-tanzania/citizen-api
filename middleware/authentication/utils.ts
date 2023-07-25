@@ -13,8 +13,8 @@ export async function extractUserPermission(email: string, role: Role) {
     if (!role) return null
     try {
         if (Role.ADMIN === role) {
-            const admin: Record<string, any> = await adminService.getAdminByEmail(email);
-            userPermission = admin.permissionFlags;
+            const admin = await adminService.getAdminByEmail(email);
+            userPermission = admin?.permissionFlags;
             return userPermission ? userPermission : null;
         }
         if (role === Role.LAW_ENFORCEMENT) {

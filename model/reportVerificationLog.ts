@@ -1,12 +1,12 @@
-import { Document, SchemaType } from "mongoose";
+import { Document, SchemaType, Schema } from "mongoose";
 import mongooseService from "../common/services/mongoose.service";
 import { queryById } from "../repository/utils/createQueryById";
 import LostPhoneReportModel from "./report";
 import UserModel from "./user";
-const { Schema, model } = mongooseService.getMongoose();
+const {  model } = mongooseService.getMongoose();
 
 interface IReportVerificationLog extends Document {
-    reportId: string;
+    reportId: Schema.Types.ObjectId;
     newVerifiedStatus: boolean;
     reason?: string;
     issuedBy: string;

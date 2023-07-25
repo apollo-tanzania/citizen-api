@@ -118,7 +118,7 @@ class LocalRepository {
                 { new: true, runValidators: true }
             ).exec();
 
-            return local._id;
+            return local?._id;
         } catch (error) {
             return error
         }

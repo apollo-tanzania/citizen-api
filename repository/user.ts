@@ -49,7 +49,7 @@ class StationRepository {
     }
 
     async getUserById(userId: string) {
-        return this.User.findOne({ _id: userId }).populate('User').exec();
+        return this.User.findOne({ _id: userId }).exec();
     }
 
     async getUsers(queryParams: QueryParams) {

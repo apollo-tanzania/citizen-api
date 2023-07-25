@@ -1,0 +1,639 @@
+{
+	"info": {
+		"_postman_id": "485e2ef1-f5b8-46a8-9055-5f71cbabc380",
+		"name": "Citizen",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14386097"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": []
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Admins",
+					"item": [
+						{
+							"name": "getAdmins",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admins",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAdminsById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admins/OZzqUefvd",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admins",
+										"OZzqUefvd"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "createAdmin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"adminoy@citizen.com\",\r\n    \"password\": \"citizen\",\r\n    \"firstName\": \"Christopher\",\r\n    \"middleName\": \"Fredds\",\r\n    \"lastName\": \"Masaka\",\r\n    \"role\": \"admin\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admins",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admins"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Law Enforcements",
+					"item": [
+						{
+							"name": "createLawEnforcementOfficer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"picuss@citizen.com\",\r\n    \"password\": \"law-enforcement\",\r\n    \"firstName\": \"Picuss\",\r\n    \"middleName\": \"Gwen\",\r\n    \"lastName\": \"Beron\",\r\n    \"station\": \"RB-TBT\",\r\n    \"badgeNumber\": \"RB-TBT-001\",\r\n    \"role\": \"law enforcement\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/law-enforcements",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"law-enforcements"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getLawEnforcementOfficers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/law-enforcements",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"law-enforcements"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getLawEnforcementOfficersById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/law-enforcements/if8MAb9Ku",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"law-enforcements",
+										"if8MAb9Ku"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getLawEnforcementOfficersByEmail",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/law-enforcements/piccuss@citizen.com",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"law-enforcements",
+										"piccuss@citizen.com"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patchLawEnforcementOfficer",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n    \"isVerified\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/law-enforcements/if8MAb9Ku",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"law-enforcements",
+										"if8MAb9Ku"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "General",
+					"item": [
+						{
+							"name": "getUsersById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users?userId=L9D2TsJUv",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "L9D2TsJUv"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getUsers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "createUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"chriss@gmail.com\",\r\n    \"password\": \"citizen\",\r\n    \"firstName\": \"Chriss\",\r\n    \"middleName\": \"Fredds\",\r\n    \"lastName\": \"Masaka\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteUser",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"chriss@gmail.com\",\r\n    \"password\": \"citizen\",\r\n    \"firstName\": \"Chriss\",\r\n    \"middleName\": \"Fredds\",\r\n    \"lastName\": \"Masaka\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users/giXWzxPM2",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"giXWzxPM2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getUsers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUsersById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users?userId=L9D2TsJUv",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "L9D2TsJUv"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"chriss@gmail.com\",\r\n    \"password\": \"citizen\",\r\n    \"firstName\": \"Chriss\",\r\n    \"middleName\": \"Fredds\",\r\n    \"lastName\": \"Masaka\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"chriss@gmail.com\",\r\n    \"password\": \"citizen\",\r\n    \"firstName\": \"Chriss\",\r\n    \"middleName\": \"Fredds\",\r\n    \"lastName\": \"Masaka\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/giXWzxPM2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"giXWzxPM2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "getReports",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/reports",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reports"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createReport",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\": {\r\n        \"name\": \"name\",\r\n        \"manufacturer\": \"manufacturer\",\r\n        \"model\": \"model\",\r\n        \"brand\": \"brand\",\r\n        \"imei1\": \"1312314324234\",\r\n        \"capacity\": \"256GB\"\r\n    },\r\n    \"victim\": {\r\n        \"username\": \"123\",\r\n        \"firstname\": \"Jimmy\",\r\n        \"middlename\": \"Thedos\",\r\n        \"lastname\": \"Vumbideo\"\r\n    },\r\n    \"incident\": {\r\n        \"date\": \"11/03/2023\",\r\n        \"place\": \"Place\",\r\n        \"brief\": \"brief\"\r\n\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/reports",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reports"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Phones",
+			"item": [
+				{
+					"name": "getPhones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/phones",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createPhone",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\": {\r\n        \"name\": \"name\",\r\n        \"manufacturer\": \"manufacturer\",\r\n        \"model\": \"model\",\r\n        \"brand\": \"brand\",\r\n        \"imei\": \"1312314324234\"\r\n    },\r\n    \"victim\": {\r\n        \"username\": \"123\",\r\n        \"firstname\": \"Jimmy\",\r\n        \"middlename\": \"Thedos\",\r\n        \"lastname\": \"Vumbideo\"\r\n    },\r\n    \"incident\": {\r\n        \"date\": \"11/03/2023\",\r\n        \"place\": \"Place\",\r\n        \"brief\": \"brief\"\r\n\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stations",
+			"item": [
+				{
+					"name": "getStations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/stations",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"stations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createStation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"_id\": \"RB/KWL\",\r\n    \"name\": \"Kiwalani\",\r\n    \"location\": \"Yombo Kiwalani\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/stations",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"stations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateStation",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\": \"Kiwalani\",\r\n    \"name\": \"Kiwalani\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/stations/RB-KWL",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"stations",
+								"RB-KWL"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "patchStation",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\": \"Kiwalani\",\r\n    \"name\": \"Kiwalani\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/stations/RB-KWL",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"stations",
+								"RB-KWL"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteStation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\": \"Kiwalani\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/stations/RB-KWL",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"stations",
+								"RB-KWL"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:3000",
+			"type": "default"
+		}
+	]
+}
