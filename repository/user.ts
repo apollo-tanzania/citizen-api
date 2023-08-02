@@ -3,21 +3,31 @@ import debug from 'debug';
 import { CreateUserDto } from '../dto/createUser';
 import { PatchUserDto } from '../dto/patchUser';
 import { PutUserDto } from '../dto/putUser';
-import { PermissionFlag } from '../common/middleware/common.permissionflag.enum';
+import { PermissionFlag, Role } from '../common/middleware/common.permissionflag.enum';
 import UserModel from '../model/user';
 import { QueryParams, queryWithPagination } from './utils/createPaginatedQuery';
+import { ClientSession } from 'mongoose';
+import mongooseService from '../common/services/mongoose.service';
+import AdminModel from '../model/admin';
+import { CreateLawEnforcementDto } from '../dto/lawEnforcement/createLawEnforcement';
+import LawEnforcementModel from '../model/lawEnforcement';
 
 const log: debug.IDebugger = debug('app:users-dao');
 
 class StationRepository {
 
     User = UserModel;
+    Admin = AdminModel;
+    LawEnforcement = LawEnforcementModel;
 
     constructor() {
         log('Created new instance of User Repository');
     }
 
-    async addUser(userFields: CreateUserDto) {
+    async addUser(userFields: CreateUserDto | CreateLawEnforcementDto  ) {
+        const session: ClientSession = await mongooseService.getMongoose().startSession();
+
+        session.startTransaction(); // Start transaction
         try {
             const userId = shortid.generate();
             const user = new this.User({
@@ -26,12 +36,17 @@ class StationRepository {
                 // permissionFlags: PermissionFlag.FREE_PERMISSION,
                 permissionFlags: userFields.permissionFlags
             });
-            await user.save();
-            return userId;
+            
+            const savedUser = await user.save();
+            return savedUser;
         } catch (error) {
+            await session.abortTransaction();
             throw error
+        } finally {
+            // Ending sesion
+            session.endSession()
         }
-
+    
     }
 
     async getUserByEmail(email: string) {

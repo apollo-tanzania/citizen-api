@@ -38,7 +38,7 @@ class LawEnforcementRepository {
         try {
 
             const userId = shortid.generate();
-            const user = await new this.User({
+            const user = new this.User({
                 _id: userId,
                 ...lawEnforcementOfficerFields,
             });
@@ -48,14 +48,14 @@ class LawEnforcementRepository {
             let lawEnforcementOfficer;
 
             if (lawEnforcementOfficerFields.permissionFlags) {
-                lawEnforcementOfficer = await new this.LawEnforcement({
+                lawEnforcementOfficer = new this.LawEnforcement({
                     username: savedUser?._id,
                     station: lawEnforcementOfficerFields.station,
                     badgeNumber: lawEnforcementOfficerFields.badgeNumber,
                     permissionFlags: lawEnforcementOfficerFields.permissionFlags,
                 })
             } else {
-                lawEnforcementOfficer = await new this.LawEnforcement({
+                lawEnforcementOfficer = new this.LawEnforcement({
                     username: savedUser?._id,
                     station: lawEnforcementOfficerFields.station,
                     badgeNumber: lawEnforcementOfficerFields.badgeNumber,

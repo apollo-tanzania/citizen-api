@@ -5,4 +5,5 @@ export interface CreateUserDto {
     middleName?: string;
     lastName?: string;
     permissionFlags?: number;
+    role?: string;
 }

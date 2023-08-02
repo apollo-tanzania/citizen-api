@@ -290,6 +290,7 @@ const dataSeeder = async () => {
     // Report.db.dropCollection("reports")
     // Imei.db.dropCollection("imeis")
 
+    // User.db.d
     // StolenPhone.countDocuments((err: Error, count: number) => {
     //     if (!err && count !== 0) {
     //         StolenPhone.db.dropCollection("stolenphones")

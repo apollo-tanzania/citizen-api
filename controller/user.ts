@@ -36,12 +36,12 @@ class UsersController {
     async createUser(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             req.body.password = await argon2.hash(req.body.password);
-            const userId = await usersService.create(req.body);
+            // const userId = await usersService.create(req.body);
+            const user = await usersService.create(req.body);
             res.locals.data = {
-                userId
+                user
             }
             buildApiResponse(res, 201, true)
-            // res.status(201).send({ id: userId });
         } catch (error) {
             next(error);
         }
